@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GA4 QA Digest — May 2026</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f0f2f5; color: #1a1a1a; padding: 32px 24px;
+        }
+        header {
+            max-width: 960px; margin: 0 auto 32px;
+            border-left: 5px solid #1A56A0; padding-left: 16px;
+        }
+        header h1 { font-size: 1.8rem; color: #1A56A0; }
+        header p  { color: #666; font-size: 0.9rem; margin-top: 4px; }
+
+        .card {
+            background: #fff; border-radius: 10px; padding: 24px;
+            margin: 0 auto 24px; max-width: 960px;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+        }
+        .card-header {
+            display: flex; justify-content: space-between;
+            align-items: flex-start; margin-bottom: 20px;
+            padding-bottom: 16px; border-bottom: 1px solid #eee;
+        }
+        .prop-name   { font-size: 1.1rem; font-weight: 700; }
+        .prop-id     { font-size: 0.8rem; color: #888; margin-top: 2px; }
+        .health-badge { font-size: 0.95rem; font-weight: 600; }
+
+        .sections { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+        .section-title {
+            font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: .06em; margin-bottom: 8px; padding: 4px 0;
+            border-bottom: 2px solid currentColor;
+        }
+        .new     { color: #1d4ed8; }
+        .dropped { color: #b91c1c; }
+        .spike   { color: #92400e; }
+        .dip     { color: #9f1239; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+        th    {
+            text-align: left; padding: 5px 8px; background: #f7f8fa;
+            color: #555; font-weight: 600; border-bottom: 1px solid #e5e7eb;
+        }
+        td    { padding: 5px 8px; border-bottom: 1px solid #f0f0f0; }
+        tr:last-child td { border-bottom: none; }
+        .empty { color: #aaa; font-style: italic; font-size: 0.8rem; padding: 8px; }
+
+        @media (max-width: 640px) {
+            .sections { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>GA4 QA Digest — May 2026</h1>
+        <p>Generated 2026-05-21 14:44 UTC &nbsp;·&nbsp; Spike threshold: +50% &nbsp;·&nbsp; Dip threshold: -50%</p>
+    </header>
+    
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="prop-name">AIA</div>
+                    <div class="prop-id">analytics_••••••389</div>
+                </div>
+                <div class="health-badge">🔴 Action Required</div>
+            </div>
+
+            <div class="sections">
+                <div class="section">
+                    <div class="section-title new">🆕 New Events (2)</div>
+                    <table>
+                        <tr><th>Event</th><th>This Month</th></tr>
+                        <tr><td>form_submission_contact_us_team_building</td><td>1</td></tr><tr><td>button_click_football_combine_prep</td><td>1</td></tr>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <div class="section-title dropped">❌ Dropped Events (1)</div>
+                    <table>
+                        <tr><th>Event</th><th>Last Month</th></tr>
+                        <tr><td>email_click_recruiting</td><td>2</td></tr>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <div class="section-title spike">📈 Spikes (6)</div>
+                    <table>
+                        <tr><th>Event</th><th>Last Month</th><th>This Month</th><th>Change</th></tr>
+                        
+            <tr>
+                <td>form_submission_campus</td>
+                <td>1</td>
+                <td>3</td>
+                <td>+200.0%</td>
+            </tr>
+            <tr>
+                <td>button_click_soccer_residential_teams</td>
+                <td>2</td>
+                <td>4</td>
+                <td>+100.0%</td>
+            </tr>
+            <tr>
+                <td>add_payment_info</td>
+                <td>15</td>
+                <td>30</td>
+                <td>+100.0%</td>
+            </tr>
+            <tr>
+                <td>purchase</td>
+                <td>15</td>
+                <td>26</td>
+                <td>+73.3%</td>
+            </tr>
+            <tr>
+                <td>add_to_cart</td>
+                <td>18</td>
+                <td>29</td>
+                <td>+61.1%</td>
+            </tr>
+            <tr>
+                <td>button_click_program_and_camps</td>
+                <td>74</td>
+                <td>119</td>
+                <td>+60.8%</td>
+            </tr>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <div class="section-title dip">📉 Dips (25)</div>
+                    <table>
+                        <tr><th>Event</th><th>Last Month</th><th>This Month</th><th>Change</th></tr>
+                        
+            <tr>
+                <td>button_click_coach_wooden</td>
+                <td>42</td>
+                <td>8</td>
+                <td>-81.0%</td>
+            </tr>
+            <tr>
+                <td>button_click_team_building</td>
+                <td>31</td>
+                <td>7</td>
+                <td>-77.4%</td>
+            </tr>
+            <tr>
+                <td>form_submission_ministry_tools</td>
+                <td>13</td>
+                <td>3</td>
+                <td>-76.9%</td>
+            </tr>
+            <tr>
+                <td>acs_email_sign_up</td>
+                <td>87</td>
+                <td>26</td>
+                <td>-70.1%</td>
+            </tr>
+            <tr>
+                <td>button_click_facility_wooden_fieldhouse</td>
+                <td>69</td>
+                <td>21</td>
+                <td>-69.6%</td>
+            </tr>
+            <tr>
+                <td>form_sub_be_an_influencer</td>
+                <td>14</td>
+                <td>5</td>
+                <td>-64.3%</td>
+            </tr>
+            <tr>
+                <td>form_sub_coach_winning_character</td>
+                <td>44</td>
+                <td>17</td>
+                <td>-61.4%</td>
+            </tr>
+            <tr>
+                <td>internal_link_click</td>
+                <td>24,461</td>
+                <td>9,849</td>
+                <td>-59.7%</td>
+            </tr>
+            <tr>
+                <td>video_progress</td>
+                <td>25,706</td>
+                <td>10,765</td>
+                <td>-58.1%</td>
+            </tr>
+            <tr>
+                <td>button_click_give_wooden_fieldhouse</td>
+                <td>7</td>
+                <td>3</td>
+                <td>-57.1%</td>
+            </tr>
+            <tr>
+                <td>button_click_intern_with_us</td>
+                <td>213</td>
+                <td>95</td>
+                <td>-55.4%</td>
+            </tr>
+            <tr>
+                <td>video_start</td>
+                <td>10,450</td>
+                <td>4,717</td>
+                <td>-54.9%</td>
+            </tr>
+            <tr>
+                <td>form_interaction_campus</td>
+                <td>33</td>
+                <td>15</td>
+                <td>-54.5%</td>
+            </tr>
+            <tr>
+                <td>button_click_volunteer_with_us</td>
+                <td>35</td>
+                <td>16</td>
+                <td>-54.3%</td>
+            </tr>
+            <tr>
+                <td>button_click_read_more_internships</td>
+                <td>277</td>
+                <td>127</td>
+                <td>-54.1%</td>
+            </tr>
+            <tr>
+                <td>video_complete</td>
+                <td>5,380</td>
+                <td>2,469</td>
+                <td>-54.1%</td>
+            </tr>
+            <tr>
+                <td>button_click_find_ministry_resources</td>
+                <td>442</td>
+                <td>203</td>
+                <td>-54.1%</td>
+            </tr>
+            <tr>
+                <td>button_click_read_more_field_staff</td>
+                <td>137</td>
+                <td>63</td>
+                <td>-54.0%</td>
+            </tr>
+            <tr>
+                <td>button_click_team_retreats</td>
+                <td>45</td>
+                <td>21</td>
+                <td>-53.3%</td>
+            </tr>
+            <tr>
+                <td>button_click_tournaments_and_leagues</td>
+                <td>93</td>
+                <td>44</td>
+                <td>-52.7%</td>
+            </tr>
+            <tr>
+                <td>button_click_support_aia</td>
+                <td>562</td>
+                <td>267</td>
+                <td>-52.5%</td>
+            </tr>
+            <tr>
+                <td>link_click_donate</td>
+                <td>556</td>
+                <td>265</td>
+                <td>-52.3%</td>
+            </tr>
+            <tr>
+                <td>begin_checkout</td>
+                <td>890</td>
+                <td>437</td>
+                <td>-50.9%</td>
+            </tr>
+            <tr>
+                <td>button_click_read_more_full_time_staff</td>
+                <td>331</td>
+                <td>164</td>
+                <td>-50.5%</td>
+            </tr>
+            <tr>
+                <td>button_click_residential_experiences</td>
+                <td>20</td>
+                <td>10</td>
+                <td>-50.0%</td>
+            </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="prop-name">JesusFilm</div>
+                    <div class="prop-id">analytics_••••••532</div>
+                </div>
+                <div class="health-badge">🔴 Action Required</div>
+            </div>
+
+            <div class="sections">
+                <div class="section">
+                    <div class="section-title new">🆕 New Events (0)</div>
+                    <table>
+                        <tr><th>Event</th><th>This Month</th></tr>
+                        <tr><td colspan='2' class='empty'>None detected</td></tr>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <div class="section-title dropped">❌ Dropped Events (3)</div>
+                    <table>
+                        <tr><th>Event</th><th>Last Month</th></tr>
+                        <tr><td>ea_join_study</td><td>3</td></tr><tr><td>ea_ask_yours</td><td>11</td></tr><tr><td>ea_share_click</td><td>95</td></tr>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <div class="section-title spike">📈 Spikes (1)</div>
+                    <table>
+                        <tr><th>Event</th><th>Last Month</th><th>This Month</th><th>Change</th></tr>
+                        
+            <tr>
+                <td>checkout_error</td>
+                <td>624</td>
+                <td>1,316</td>
+                <td>+110.9%</td>
+            </tr>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <div class="section-title dip">📉 Dips (28)</div>
+                    <table>
+                        <tr><th>Event</th><th>Last Month</th><th>This Month</th><th>Change</th></tr>
+                        
+            <tr>
+                <td>ea_video_play</td>
+                <td>389</td>
+                <td>1</td>
+                <td>-99.7%</td>
+            </tr>
+            <tr>
+                <td>ea_video_pause</td>
+                <td>1,059</td>
+                <td>4</td>
+                <td>-99.6%</td>
+            </tr>
+            <tr>
+                <td>ea_video_seek</td>
+                <td>1,548</td>
+                <td>15</td>
+                <td>-99.0%</td>
+            </tr>
+            <tr>
+                <td>ea_video_auto_play</td>
+                <td>12,285</td>
+                <td>183</td>
+                <td>-98.5%</td>
+            </tr>
+            <tr>
+                <td>ea_quiz</td>
+                <td>36</td>
+                <td>1</td>
+                <td>-97.2%</td>
+            </tr>
+            <tr>
+                <td>ea_video_enter_full_screen</td>
+                <td>386</td>
+                <td>16</td>
+                <td>-95.8%</td>
+            </tr>
+            <tr>
+                <td>ea_video_exit_full_screen</td>
+                <td>233</td>
+                <td>15</td>
+                <td>-93.6%</td>
+            </tr>
+            <tr>
+                <td>video_pause</td>
+                <td>404,909</td>
+                <td>143,696</td>
+                <td>-64.5%</td>
+            </tr>
+            <tr>
+                <td>videoplay</td>
+                <td>322,564</td>
+                <td>114,514</td>
+                <td>-64.5%</td>
+            </tr>
+            <tr>
+                <td>videostarts</td>
+                <td>256,512</td>
+                <td>91,984</td>
+                <td>-64.1%</td>
+            </tr>
+            <tr>
+                <td>button_click</td>
+                <td>139,347</td>
+                <td>51,969</td>
+                <td>-62.7%</td>
+            </tr>
+            <tr>
+                <td>first_visit</td>
+                <td>227,041</td>
+                <td>93,001</td>
+                <td>-59.0%</td>
+            </tr>
+            <tr>
+                <td>session_start</td>
+                <td>318,736</td>
+                <td>132,172</td>
+                <td>-58.5%</td>
+            </tr>
+            <tr>
+                <td>a_media_progress10</td>
+                <td>69,546</td>
+                <td>29,219</td>
+                <td>-58.0%</td>
+            </tr>
+            <tr>
+                <td>page_view</td>
+                <td>500,139</td>
+                <td>210,404</td>
+                <td>-57.9%</td>
+            </tr>
+            <tr>
+                <td>a_media_progress25</td>
+                <td>59,061</td>
+                <td>25,514</td>
+                <td>-56.8%</td>
+            </tr>
+            <tr>
+                <td>view_search_results</td>
+                <td>1,668</td>
+                <td>740</td>
+                <td>-55.6%</td>
+            </tr>
+            <tr>
+                <td>a_media_progress50</td>
+                <td>47,219</td>
+                <td>21,133</td>
+                <td>-55.2%</td>
+            </tr>
+            <tr>
+                <td>click</td>
+                <td>41,985</td>
+                <td>18,991</td>
+                <td>-54.8%</td>
+            </tr>
+            <tr>
+                <td>link_click</td>
+                <td>108,383</td>
+                <td>49,495</td>
+                <td>-54.3%</td>
+            </tr>
+            <tr>
+                <td>form_submit</td>
+                <td>1,515</td>
+                <td>693</td>
+                <td>-54.3%</td>
+            </tr>
+            <tr>
+                <td>a_media_progress75</td>
+                <td>39,444</td>
+                <td>18,057</td>
+                <td>-54.2%</td>
+            </tr>
+            <tr>
+                <td>file_download</td>
+                <td>12,954</td>
+                <td>5,984</td>
+                <td>-53.8%</td>
+            </tr>
+            <tr>
+                <td>scroll</td>
+                <td>81,232</td>
+                <td>37,572</td>
+                <td>-53.8%</td>
+            </tr>
+            <tr>
+                <td>a_media_progress90</td>
+                <td>34,143</td>
+                <td>15,868</td>
+                <td>-53.5%</td>
+            </tr>
+            <tr>
+                <td>form_start</td>
+                <td>8,055</td>
+                <td>3,748</td>
+                <td>-53.5%</td>
+            </tr>
+            <tr>
+                <td>user_engagement</td>
+                <td>125,654</td>
+                <td>58,644</td>
+                <td>-53.3%</td>
+            </tr>
+            <tr>
+                <td>error_404</td>
+                <td>3,566</td>
+                <td>1,724</td>
+                <td>-51.6%</td>
+            </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="prop-name">Familylife</div>
+                    <div class="prop-id">analytics_••••••268</div>
+                </div>
+                <div class="health-badge">🔴 Action Required</div>
+            </div>
+
+            <div class="sections">
+                <div class="section">
+                    <div class="section-title new">🆕 New Events (0)</div>
+                    <table>
+                        <tr><th>Event</th><th>This Month</th></tr>
+                        <tr><td colspan='2' class='empty'>None detected</td></tr>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <div class="section-title dropped">❌ Dropped Events (0)</div>
+                    <table>
+                        <tr><th>Event</th><th>Last Month</th></tr>
+                        <tr><td colspan='2' class='empty'>None detected</td></tr>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <div class="section-title spike">📈 Spikes (6)</div>
+                    <table>
+                        <tr><th>Event</th><th>Last Month</th><th>This Month</th><th>Change</th></tr>
+                        
+            <tr>
+                <td>experience_impression</td>
+                <td>731</td>
+                <td>39,312</td>
+                <td>+5277.8%</td>
+            </tr>
+            <tr>
+                <td>donation_type</td>
+                <td>39</td>
+                <td>1,063</td>
+                <td>+2625.6%</td>
+            </tr>
+            <tr>
+                <td>view_cart</td>
+                <td>30,393</td>
+                <td>154,643</td>
+                <td>+408.8%</td>
+            </tr>
+            <tr>
+                <td>view_item_list</td>
+                <td>79,447</td>
+                <td>178,201</td>
+                <td>+124.3%</td>
+            </tr>
+            <tr>
+                <td>begin_checkout</td>
+                <td>4,514</td>
+                <td>8,202</td>
+                <td>+81.7%</td>
+            </tr>
+            <tr>
+                <td>step_4_spouse_registration</td>
+                <td>408</td>
+                <td>708</td>
+                <td>+73.5%</td>
+            </tr>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <div class="section-title dip">📉 Dips (20)</div>
+                    <table>
+                        <tr><th>Event</th><th>Last Month</th><th>This Month</th><th>Change</th></tr>
+                        
+            <tr>
+                <td>step_3_registration</td>
+                <td>7,526</td>
+                <td>1,543</td>
+                <td>-79.5%</td>
+            </tr>
+            <tr>
+                <td>cvent_event_page</td>
+                <td>95,223</td>
+                <td>23,894</td>
+                <td>-74.9%</td>
+            </tr>
+            <tr>
+                <td>remove_from_cart</td>
+                <td>422</td>
+                <td>128</td>
+                <td>-69.7%</td>
+            </tr>
+            <tr>
+                <td>buyer_purchase</td>
+                <td>1,161</td>
+                <td>359</td>
+                <td>-69.1%</td>
+            </tr>
+            <tr>
+                <td>step_2_cvent_event_page</td>
+                <td>64,728</td>
+                <td>22,707</td>
+                <td>-64.9%</td>
+            </tr>
+            <tr>
+                <td>file_download</td>
+                <td>3,969</td>
+                <td>1,424</td>
+                <td>-64.1%</td>
+            </tr>
+            <tr>
+                <td>add_shipping_info</td>
+                <td>1,144</td>
+                <td>416</td>
+                <td>-63.6%</td>
+            </tr>
+            <tr>
+                <td>aom_videos_toggle_another_retailer</td>
+                <td>68</td>
+                <td>25</td>
+                <td>-63.2%</td>
+            </tr>
+            <tr>
+                <td>refund</td>
+                <td>275</td>
+                <td>105</td>
+                <td>-61.8%</td>
+            </tr>
+            <tr>
+                <td>donor_purchase</td>
+                <td>2,226</td>
+                <td>897</td>
+                <td>-59.7%</td>
+            </tr>
+            <tr>
+                <td>add_to_cart</td>
+                <td>3,188</td>
+                <td>1,291</td>
+                <td>-59.5%</td>
+            </tr>
+            <tr>
+                <td>aom_videos_toggle_familylife_website</td>
+                <td>86</td>
+                <td>35</td>
+                <td>-59.3%</td>
+            </tr>
+            <tr>
+                <td>sign_up</td>
+                <td>7,752</td>
+                <td>3,257</td>
+                <td>-58.0%</td>
+            </tr>
+            <tr>
+                <td>add_payment_info</td>
+                <td>1,489</td>
+                <td>637</td>
+                <td>-57.2%</td>
+            </tr>
+            <tr>
+                <td>email_visitor_acquired</td>
+                <td>29,972</td>
+                <td>13,262</td>
+                <td>-55.8%</td>
+            </tr>
+            <tr>
+                <td>email_capture</td>
+                <td>12,810</td>
+                <td>5,977</td>
+                <td>-53.3%</td>
+            </tr>
+            <tr>
+                <td>select_item</td>
+                <td>5,377</td>
+                <td>2,545</td>
+                <td>-52.7%</td>
+            </tr>
+            <tr>
+                <td>step_5_add_payment</td>
+                <td>1,833</td>
+                <td>869</td>
+                <td>-52.6%</td>
+            </tr>
+            <tr>
+                <td>click</td>
+                <td>49,583</td>
+                <td>23,649</td>
+                <td>-52.3%</td>
+            </tr>
+            <tr>
+                <td>step_1_weekend_to_remember</td>
+                <td>141,920</td>
+                <td>70,618</td>
+                <td>-50.2%</td>
+            </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="prop-name">Cru</div>
+                    <div class="prop-id">analytics_••••••219</div>
+                </div>
+                <div class="health-badge">🔴 Action Required</div>
+            </div>
+
+            <div class="sections">
+                <div class="section">
+                    <div class="section-title new">🆕 New Events (0)</div>
+                    <table>
+                        <tr><th>Event</th><th>This Month</th></tr>
+                        <tr><td colspan='2' class='empty'>None detected</td></tr>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <div class="section-title dropped">❌ Dropped Events (3)</div>
+                    <table>
+                        <tr><th>Event</th><th>Last Month</th></tr>
+                        <tr><td>signup_christmas_2025</td><td>5</td></tr><tr><td>signup_christmas_2024</td><td>5</td></tr><tr><td>typeform_submit</td><td>2</td></tr>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <div class="section-title spike">📈 Spikes (2)</div>
+                    <table>
+                        <tr><th>Event</th><th>Last Month</th><th>This Month</th><th>Change</th></tr>
+                        
+            <tr>
+                <td>typeform_first_interaction</td>
+                <td>1</td>
+                <td>2</td>
+                <td>+100.0%</td>
+            </tr>
+            <tr>
+                <td>error_404</td>
+                <td>7,747</td>
+                <td>14,125</td>
+                <td>+82.3%</td>
+            </tr>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <div class="section-title dip">📉 Dips (13)</div>
+                    <table>
+                        <tr><th>Event</th><th>Last Month</th><th>This Month</th><th>Change</th></tr>
+                        
+            <tr>
+                <td>view_search_results</td>
+                <td>2,835</td>
+                <td>190</td>
+                <td>-93.3%</td>
+            </tr>
+            <tr>
+                <td>AddToAnyShare</td>
+                <td>1,407</td>
+                <td>342</td>
+                <td>-75.7%</td>
+            </tr>
+            <tr>
+                <td>internal_link_click</td>
+                <td>280,026</td>
+                <td>73,425</td>
+                <td>-73.8%</td>
+            </tr>
+            <tr>
+                <td>click</td>
+                <td>70,962</td>
+                <td>20,533</td>
+                <td>-71.1%</td>
+            </tr>
+            <tr>
+                <td>banner_impression</td>
+                <td>20,940</td>
+                <td>6,285</td>
+                <td>-70.0%</td>
+            </tr>
+            <tr>
+                <td>download_click</td>
+                <td>8,707</td>
+                <td>2,950</td>
+                <td>-66.1%</td>
+            </tr>
+            <tr>
+                <td>campus_locator_learn_more</td>
+                <td>1,181</td>
+                <td>403</td>
+                <td>-65.9%</td>
+            </tr>
+            <tr>
+                <td>file_download</td>
+                <td>8,980</td>
+                <td>3,248</td>
+                <td>-63.8%</td>
+            </tr>
+            <tr>
+                <td>video_start</td>
+                <td>165</td>
+                <td>67</td>
+                <td>-59.4%</td>
+            </tr>
+            <tr>
+                <td>internal_button_click</td>
+                <td>175,473</td>
+                <td>73,473</td>
+                <td>-58.1%</td>
+            </tr>
+            <tr>
+                <td>video_progress</td>
+                <td>404</td>
+                <td>171</td>
+                <td>-57.7%</td>
+            </tr>
+            <tr>
+                <td>scroll</td>
+                <td>467,808</td>
+                <td>229,174</td>
+                <td>-51.0%</td>
+            </tr>
+            <tr>
+                <td>pageview</td>
+                <td>66</td>
+                <td>33</td>
+                <td>-50.0%</td>
+            </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="prop-name">Give Site</div>
+                    <div class="prop-id">analytics_••••••413</div>
+                </div>
+                <div class="health-badge">⚠️  Needs Review</div>
+            </div>
+
+            <div class="sections">
+                <div class="section">
+                    <div class="section-title new">🆕 New Events (0)</div>
+                    <table>
+                        <tr><th>Event</th><th>This Month</th></tr>
+                        <tr><td colspan='2' class='empty'>None detected</td></tr>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <div class="section-title dropped">❌ Dropped Events (3)</div>
+                    <table>
+                        <tr><th>Event</th><th>Last Month</th></tr>
+                        <tr><td>page_view_give_cru</td><td>9</td></tr><tr><td>yt_video_progress10</td><td>1</td></tr><tr><td>yt_video_start</td><td>5</td></tr>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <div class="section-title spike">📈 Spikes (0)</div>
+                    <table>
+                        <tr><th>Event</th><th>Last Month</th><th>This Month</th><th>Change</th></tr>
+                        <tr><td colspan='4' class='empty'>None detected</td></tr>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <div class="section-title dip">📉 Dips (0)</div>
+                    <table>
+                        <tr><th>Event</th><th>Last Month</th><th>This Month</th><th>Change</th></tr>
+                        <tr><td colspan='4' class='empty'>None detected</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+</body>
+</html>
