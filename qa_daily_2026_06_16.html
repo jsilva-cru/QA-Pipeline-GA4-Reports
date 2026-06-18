@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GA4 Daily Alert — Tuesday, June 16, 2026</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: #f0f2f5; color: #1a1a1a; padding: 28px 20px;
+    }
+
+    /* ── Header ── */
+    .report-header {
+        max-width: 1020px; margin: 0 auto 28px;
+        border-left: 5px solid #1A56A0; padding-left: 16px;
+    }
+    .report-header h1 { font-size: 1.7rem; color: #1A56A0; }
+    .report-header p  { color: #666; font-size: 0.85rem; margin-top: 4px; }
+    .period-badge {
+        display: inline-block; margin-top: 8px; font-size: 0.82rem;
+        background: #e8f0fb; color: #1A56A0; padding: 3px 10px;
+        border-radius: 12px; font-weight: 500;
+    }
+
+    /* ── Cards ── */
+    .card {
+        background: #fff; border-radius: 10px; padding: 22px 24px;
+        margin: 0 auto 20px; max-width: 1020px;
+        box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+    }
+    .card-header {
+        display: flex; justify-content: space-between; align-items: flex-start;
+        padding-bottom: 14px; margin-bottom: 18px; border-bottom: 1px solid #eee;
+    }
+    .prop-name  { font-size: 1.05rem; font-weight: 700; }
+    .prop-id    { font-size: 0.76rem; color: #aaa; margin-top: 3px; }
+    .prop-type  {
+        font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+        letter-spacing: .05em; color: #fff; padding: 2px 8px;
+        border-radius: 10px; margin-top: 4px; display: inline-block;
+    }
+    .type-ecommerce { background: #1A56A0; }
+    .type-lead_gen  { background: #16A34A; }
+    .type-content   { background: #888; }
+
+    /* ── Section titles ── */
+    .section-title {
+        font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+        letter-spacing: .06em; color: #555; margin: 20px 0 10px;
+        padding-bottom: 5px; border-bottom: 1px solid #e5e7eb;
+    }
+
+    /* ── Metric rows ── */
+    .metrics-grid {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+        margin-bottom: 4px;
+    }
+    .metric-row {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 8px 12px; background: #f8f9fb; border-radius: 6px;
+        font-size: 0.83rem;
+    }
+    .metric-label { color: #444; flex: 1; }
+    .metric-label small { display: block; color: #999; font-size: 0.73rem; margin-top: 1px; }
+    .metric-values { text-align: right; flex-shrink: 0; margin-left: 12px; }
+    .metric-current { font-weight: 600; font-size: 0.9rem; }
+    .metric-previous { font-size: 0.75rem; color: #999; margin-top: 1px; }
+    .metric-change {
+        font-size: 0.78rem; font-weight: 600; margin-top: 2px;
+    }
+    .change-up-good   { color: #16A34A; }
+    .change-up-bad    { color: #DC2626; }
+    .change-down-good { color: #16A34A; }
+    .change-down-bad  { color: #DC2626; }
+    .change-neutral   { color: #888; }
+
+    /* ── Tables ── */
+    table { width: 100%; border-collapse: collapse; font-size: 0.81rem; }
+    th {
+        text-align: left; padding: 6px 10px; background: #f7f8fa;
+        color: #555; font-weight: 600; border-bottom: 1px solid #e5e7eb;
+    }
+    td { padding: 6px 10px; border-bottom: 1px solid #f2f2f2; }
+    tr:last-child td { border-bottom: none; }
+    .empty { color: #aaa; font-style: italic; font-size: 0.8rem; padding: 10px; }
+    .pct-positive { color: #16A34A; font-weight: 600; }
+    .pct-negative { color: #DC2626; font-weight: 600; }
+    .pct-neutral  { color: #888; }
+
+    /* ── Alert cards (daily) ── */
+    .alert-card {
+        background: #FEF2F2; border: 1px solid #FECACA;
+        border-left: 4px solid #DC2626; border-radius: 8px;
+        padding: 14px 18px; margin: 0 auto 14px; max-width: 1020px;
+    }
+    .alert-card h3 { font-size: 0.9rem; color: #991B1B; margin-bottom: 4px; }
+    .alert-card p  { font-size: 0.82rem; color: #7F1D1D; }
+    .all-clear {
+        background: #F0FFF4; border: 1px solid #BBF7D0;
+        border-left: 4px solid #16A34A; border-radius: 8px;
+        padding: 20px 24px; margin: 0 auto 20px; max-width: 1020px;
+        text-align: center;
+    }
+    .all-clear h2 { color: #14532D; font-size: 1.1rem; }
+    .all-clear p  { color: #166534; font-size: 0.85rem; margin-top: 6px; }
+
+    /* ── Funnel ── */
+    .funnel-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 8px; margin-bottom: 16px;
+    }
+    .funnel-step {
+        background: #f0f4fb; border-radius: 8px; padding: 12px;
+        text-align: center;
+    }
+    .funnel-step-name {
+        font-size: 0.72rem; text-transform: uppercase; letter-spacing: .04em;
+        color: #666; margin-bottom: 4px;
+    }
+    .funnel-step-count { font-size: 1.2rem; font-weight: 700; color: #1A56A0; }
+    .funnel-step-pct   { font-size: 0.75rem; color: #888; margin-top: 2px; }
+    .funnel-step-change { font-size: 0.75rem; font-weight: 600; margin-top: 3px; }
+
+    /* ── Charts ── */
+    .chart-section {
+        margin-top: 20px; padding-top: 16px; border-top: 1px solid #eee;
+    }
+    .chart-title {
+        font-size: 0.85rem; font-weight: 700; color: #1A56A0; margin-bottom: 10px;
+    }
+    .chart-sub {
+        font-size: 0.73rem; font-weight: 400; color: #aaa; margin-left: 8px;
+    }
+    .chart-wrap { position: relative; height: 280px; }
+
+    /* ── Two-col layout ── */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    @media (max-width: 680px) {
+        .metrics-grid  { grid-template-columns: 1fr; }
+        .two-col       { grid-template-columns: 1fr; }
+        .funnel-grid   { grid-template-columns: repeat(2, 1fr); }
+        .chart-wrap    { height: 220px; }
+    }
+    </style>
+</head>
+<body>
+    <div class="report-header">
+        <h1>GA4 Daily Alert — Tuesday, June 16, 2026</h1>
+        <p>Generated 2026-06-18 14:29 UTC</p>
+        <span class="period-badge">Yesterday · Tuesday, June 16, 2026</span>
+    </div>
+    
+            <div class="alert-card">
+                <h3>⚠️ Familylife — Revenue (> 0)</h3>
+                <p>Current: 46.0% · Threshold: 70.0%</p>
+            </div>
+            <div class="alert-card">
+                <h3>⚠️ AIA — zero_purchases</h3>
+                <p>Zero purchases recorded yesterday</p>
+            </div>
+</body>
+</html>
