@@ -1,0 +1,3683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GA4 QA Weekly Report — Week of June 22, 2026</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: #f0f2f5; color: #1a1a1a; padding: 28px 20px;
+    }
+
+    /* ── Header ── */
+    .report-header {
+        max-width: 1020px; margin: 0 auto 28px;
+        border-left: 5px solid #1A56A0; padding-left: 16px;
+    }
+    .report-header h1 { font-size: 1.7rem; color: #1A56A0; }
+    .report-header p  { color: #666; font-size: 0.85rem; margin-top: 4px; }
+    .period-badge {
+        display: inline-block; margin-top: 8px; font-size: 0.82rem;
+        background: #e8f0fb; color: #1A56A0; padding: 3px 10px;
+        border-radius: 12px; font-weight: 500;
+    }
+
+    /* ── Cards ── */
+    .card {
+        background: #fff; border-radius: 10px; padding: 22px 24px;
+        margin: 0 auto 20px; max-width: 1020px;
+        box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+    }
+    .card-header {
+        display: flex; justify-content: space-between; align-items: flex-start;
+        padding-bottom: 14px; margin-bottom: 18px; border-bottom: 1px solid #eee;
+    }
+    .prop-name  { font-size: 1.05rem; font-weight: 700; }
+    .prop-id    { font-size: 0.76rem; color: #aaa; margin-top: 3px; }
+    .prop-type  {
+        font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+        letter-spacing: .05em; color: #fff; padding: 2px 8px;
+        border-radius: 10px; margin-top: 4px; display: inline-block;
+    }
+    .type-ecommerce { background: #1A56A0; }
+    .type-lead_gen  { background: #16A34A; }
+    .type-content   { background: #888; }
+
+    /* ── Section titles ── */
+    .section-title {
+        font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+        letter-spacing: .06em; color: #555; margin: 20px 0 10px;
+        padding-bottom: 5px; border-bottom: 1px solid #e5e7eb;
+    }
+
+    /* ── Metric rows ── */
+    .metrics-grid {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+        margin-bottom: 4px;
+    }
+    .metric-row {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 8px 12px; background: #f8f9fb; border-radius: 6px;
+        font-size: 0.83rem;
+    }
+    .metric-label { color: #444; flex: 1; }
+    .metric-label small { display: block; color: #999; font-size: 0.73rem; margin-top: 1px; }
+    .metric-values { text-align: right; flex-shrink: 0; margin-left: 12px; }
+    .metric-current { font-weight: 600; font-size: 0.9rem; }
+    .metric-previous { font-size: 0.75rem; color: #999; margin-top: 1px; }
+    .metric-change {
+        font-size: 0.78rem; font-weight: 600; margin-top: 2px;
+    }
+    .change-up-good   { color: #16A34A; }
+    .change-up-bad    { color: #DC2626; }
+    .change-down-good { color: #16A34A; }
+    .change-down-bad  { color: #DC2626; }
+    .change-neutral   { color: #888; }
+
+    /* ── Tables ── */
+    table { width: 100%; border-collapse: collapse; font-size: 0.81rem; }
+    th {
+        text-align: left; padding: 6px 10px; background: #f7f8fa;
+        color: #555; font-weight: 600; border-bottom: 1px solid #e5e7eb;
+    }
+    td { padding: 6px 10px; border-bottom: 1px solid #f2f2f2; }
+    tr:last-child td { border-bottom: none; }
+    .empty { color: #aaa; font-style: italic; font-size: 0.8rem; padding: 10px; }
+    .pct-positive { color: #16A34A; font-weight: 600; }
+    .pct-negative { color: #DC2626; font-weight: 600; }
+    .pct-neutral  { color: #888; }
+
+    /* ── Alert cards (daily) ── */
+    .alert-card {
+        background: #FEF2F2; border: 1px solid #FECACA;
+        border-left: 4px solid #DC2626; border-radius: 8px;
+        padding: 14px 18px; margin: 0 auto 14px; max-width: 1020px;
+    }
+    .alert-card h3 { font-size: 0.9rem; color: #991B1B; margin-bottom: 4px; }
+    .alert-card p  { font-size: 0.82rem; color: #7F1D1D; }
+    .all-clear {
+        background: #F0FFF4; border: 1px solid #BBF7D0;
+        border-left: 4px solid #16A34A; border-radius: 8px;
+        padding: 20px 24px; margin: 0 auto 20px; max-width: 1020px;
+        text-align: center;
+    }
+    .all-clear h2 { color: #14532D; font-size: 1.1rem; }
+    .all-clear p  { color: #166534; font-size: 0.85rem; margin-top: 6px; }
+
+    /* ── Funnel ── */
+    .funnel-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 8px; margin-bottom: 16px;
+    }
+    .funnel-step {
+        background: #f0f4fb; border-radius: 8px; padding: 12px;
+        text-align: center;
+    }
+    .funnel-step-name {
+        font-size: 0.72rem; text-transform: uppercase; letter-spacing: .04em;
+        color: #666; margin-bottom: 4px;
+    }
+    .funnel-step-count { font-size: 1.2rem; font-weight: 700; color: #1A56A0; }
+    .funnel-step-pct   { font-size: 0.75rem; color: #888; margin-top: 2px; }
+    .funnel-step-change { font-size: 0.75rem; font-weight: 600; margin-top: 3px; }
+
+    /* ── Charts ── */
+    .chart-section {
+        margin-top: 20px; padding-top: 16px; border-top: 1px solid #eee;
+    }
+    .chart-title {
+        font-size: 0.85rem; font-weight: 700; color: #1A56A0; margin-bottom: 10px;
+    }
+    .chart-sub {
+        font-size: 0.73rem; font-weight: 400; color: #aaa; margin-left: 8px;
+    }
+    .chart-wrap { position: relative; height: 280px; }
+
+    /* ── Two-col layout ── */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    @media (max-width: 680px) {
+        .metrics-grid  { grid-template-columns: 1fr; }
+        .two-col       { grid-template-columns: 1fr; }
+        .funnel-grid   { grid-template-columns: repeat(2, 1fr); }
+        .chart-wrap    { height: 220px; }
+    }
+    </style>
+</head>
+<body>
+    <div class="report-header">
+        <h1>GA4 QA Weekly Report — Week of June 22, 2026</h1>
+        <p>Generated 2026-06-29 12:07 UTC</p>
+        <span class="period-badge">Comparing Jun 15 - Jun 21, 2026 vs Jun 22 - Jun 28, 2026</span>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <div class="prop-name">Cru</div>
+                <div class="prop-id">analytics_••••••219</div>
+                <div style="margin-top:6px"><span class="prop-type type-lead_gen">lead gen</span> </div>
+            </div>
+        </div>
+        
+        <div class="two-col">
+            <div>
+                <div class="section-title">🆕 New Events (2)</div>
+                <table>
+                    <tr><th>Event</th><th>Jun 22 - Jun 28</th><th>Jun 15 - Jun 21</th></tr>
+                    
+            <tr>
+                <td>signup_easter_2025</td>
+                <td>1</td>
+                <td>—</td>
+            </tr>
+            <tr>
+                <td>collaborative_discipleship_download</td>
+                <td>1</td>
+                <td>—</td>
+            </tr>
+                </table>
+            </div>
+            <div>
+                <div class="section-title">❌ Dropped Events (0)</div>
+                <table>
+                    <tr><th>Event</th><th>Jun 22 - Jun 28</th><th>Jun 15 - Jun 21</th></tr>
+                    <tr><td colspan='3' class='empty'>None</td></tr>
+                </table>
+            </div>
+        </div>
+        <div class="section-title">📊 Event Volume Changes (34 events · top 15 by % change)</div>
+        <table>
+            <tr>
+                <th>Event</th>
+                <th>Jun 15 - Jun 21</th>
+                <th>Jun 22 - Jun 28</th>
+                <th>Change</th>
+            </tr>
+            
+            <tr>
+                <td>video_complete</td>
+                <td>2</td>
+                <td>8</td>
+                <td><span class="pct-positive">+300.0%</span></td>
+            </tr>
+            <tr>
+                <td>video_progress</td>
+                <td>24</td>
+                <td>67</td>
+                <td><span class="pct-positive">+179.2%</span></td>
+            </tr>
+            <tr>
+                <td>video_start</td>
+                <td>12</td>
+                <td>29</td>
+                <td><span class="pct-positive">+141.7%</span></td>
+            </tr>
+            <tr>
+                <td>indicated_decisions</td>
+                <td>7</td>
+                <td>1</td>
+                <td><span class="pct-negative">-85.7%</span></td>
+            </tr>
+            <tr>
+                <td>cbf_recommendation_click</td>
+                <td>8</td>
+                <td>2</td>
+                <td><span class="pct-negative">-75.0%</span></td>
+            </tr>
+            <tr>
+                <td>form_submit</td>
+                <td>74</td>
+                <td>126</td>
+                <td><span class="pct-positive">+70.3%</span></td>
+            </tr>
+            <tr>
+                <td>TypeformQuestionPassed</td>
+                <td>35</td>
+                <td>18</td>
+                <td><span class="pct-negative">-48.6%</span></td>
+            </tr>
+            <tr>
+                <td>TypeformSubmit</td>
+                <td>5</td>
+                <td>3</td>
+                <td><span class="pct-negative">-40.0%</span></td>
+            </tr>
+            <tr>
+                <td>AddToAnyShare</td>
+                <td>44</td>
+                <td>28</td>
+                <td><span class="pct-negative">-36.4%</span></td>
+            </tr>
+            <tr>
+                <td>view_search_results</td>
+                <td>26</td>
+                <td>33</td>
+                <td><span class="pct-positive">+26.9%</span></td>
+            </tr>
+            <tr>
+                <td>search</td>
+                <td>28</td>
+                <td>34</td>
+                <td><span class="pct-positive">+21.4%</span></td>
+            </tr>
+            <tr>
+                <td>first_visit</td>
+                <td>139,963</td>
+                <td>112,655</td>
+                <td><span class="pct-negative">-19.5%</span></td>
+            </tr>
+            <tr>
+                <td>session_start</td>
+                <td>148,893</td>
+                <td>120,548</td>
+                <td><span class="pct-negative">-19.0%</span></td>
+            </tr>
+            <tr>
+                <td>campus_locator_contact</td>
+                <td>17</td>
+                <td>14</td>
+                <td><span class="pct-negative">-17.6%</span></td>
+            </tr>
+            <tr>
+                <td>page_view</td>
+                <td>176,319</td>
+                <td>146,178</td>
+                <td><span class="pct-negative">-17.1%</span></td>
+            </tr>
+        </table>
+        <div class="section-title">🔍 (Not Set) Rates — 2,473 sessions</div>
+        <table>
+            <tr>
+                <th>Dimension</th>
+                <th>Previous</th>
+                <th>Current</th>
+                <th>Change (pp)</th>
+            </tr>
+            
+            <tr>
+                <td>Source / Medium</td>
+                <td>35.6%</td>
+                <td>35.3%</td>
+                <td><span class="change-down-good">↓ -0.3pp</span></td>
+            </tr>
+            <tr>
+                <td>Source</td>
+                <td>37.7%</td>
+                <td>37.8%</td>
+                <td><span class="change-up-bad">↑ +0.0pp</span></td>
+            </tr>
+            <tr>
+                <td>Campaign</td>
+                <td>5.0%</td>
+                <td>5.5%</td>
+                <td><span class="change-up-bad">↑ +0.5pp</span></td>
+            </tr>
+            <tr>
+                <td>Page Location</td>
+                <td>0.0%</td>
+                <td>0.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+        </table>
+        <div class="section-title">📡 Attribution Health — 23,062 paid sessions</div>
+        <table>
+            <tr>
+                <th>Metric</th><th>Previous</th><th>Current</th><th>Change (pp)</th>
+            </tr>
+            
+            <tr>
+                <td>
+                    UTM Coverage
+                    <small style="color:#999">% of sessions with at least one UTM parameter</small>
+                </td>
+                <td>99.9%</td>
+                <td>99.9%</td>
+                <td><span class="change-down-bad">↓ -0.0pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    Google Ads gclid Presence
+                    <small style="color:#999">% of all sessions carrying a gclid parameter (auto-tagging health)</small>
+                </td>
+                <td>2.6%</td>
+                <td>3.2%</td>
+                <td><span class="change-up-good">↑ +0.6pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    Paid Sessions — Missing Attribution
+                    <small style="color:#999">% of sessions from known paid sources arriving with no source/medium</small>
+                </td>
+                <td>0.2%</td>
+                <td>0.3%</td>
+                <td><span class="change-up-bad">↑ +0.1pp</span></td>
+            </tr>
+        </table>
+        
+            <div class="section-title">📣 Active Campaigns (top 10 by sessions)</div>
+            <table>
+                <tr>
+                    <th>Campaign</th><th>Source</th><th>Medium</th><th>Sessions</th>
+                </tr>
+                
+            <tr>
+                <td>(direct)</td>
+                <td>(direct)</td>
+                <td>(none)</td>
+                <td>19,441</td>
+            </tr>
+            <tr>
+                <td>(organic)</td>
+                <td>google</td>
+                <td>organic</td>
+                <td>18,166</td>
+            </tr>
+            <tr>
+                <td>Cru.org Newsletter Sign Up 2024 GA4</td>
+                <td>google</td>
+                <td>cpc</td>
+                <td>1,763</td>
+            </tr>
+            <tr>
+                <td>audio-page</td>
+                <td>cru-org</td>
+                <td>tile-link</td>
+                <td>1,268</td>
+            </tr>
+            <tr>
+                <td>easter-2024</td>
+                <td>internal</td>
+                <td>web-banner</td>
+                <td>1,153</td>
+            </tr>
+            <tr>
+                <td>(referral)</td>
+                <td>victorybeyondthecup.com</td>
+                <td>referral</td>
+                <td>612</td>
+            </tr>
+            <tr>
+                <td>(organic)</td>
+                <td>bing</td>
+                <td>organic</td>
+                <td>540</td>
+            </tr>
+            <tr>
+                <td>Digital_Marketing_Cru.org_Newsletter</td>
+                <td>facebook_instagram</td>
+                <td>cpc</td>
+                <td>535</td>
+            </tr>
+            <tr>
+                <td>(referral)</td>
+                <td>s.victorybeyondthecup.com</td>
+                <td>referral</td>
+                <td>524</td>
+            </tr>
+            <tr>
+                <td>trafficheap.cc</td>
+                <td>trafficheap.cc</td>
+                <td>referral</td>
+                <td>500</td>
+            </tr>
+            </table>
+        <div class="section-title">✅ Parameter Validity Rates</div>
+        <table>
+            <tr>
+                <th>Event</th>
+                <th>Volume</th>
+                <th>Previous</th>
+                <th>Current</th>
+                <th>Change (pp)</th>
+            </tr>
+            
+            <tr>
+                <td>
+                    <strong>form_submit</strong>
+                    <small style="color:#999;display:block">form_id or form_name present</small>
+                </td>
+                <td style="color:#888;font-size:0.8rem">126 fires / 2 valid</td>
+                <td>0.0%</td>
+                <td>1.6%</td>
+                <td><span class="change-up-good">↑ +1.6pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>form_start</strong>
+                    <small style="color:#999;display:block">form_id or form_name present</small>
+                </td>
+                <td style="color:#888;font-size:0.8rem">3,233 fires / 2,541 valid</td>
+                <td>80.2%</td>
+                <td>78.6%</td>
+                <td><span class="change-down-bad">↓ -1.6pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>page_view</strong>
+                    <small style="color:#999;display:block">page_location present and not empty</small>
+                </td>
+                <td style="color:#888;font-size:0.8rem">146,178 fires / 146,178 valid</td>
+                <td>100.0%</td>
+                <td>100.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+        </table>
+        <div class="chart-section">
+            <div class="chart-title">
+                📈 Event Volume Trends
+                <span class="chart-sub">Top 10 events · click legend to toggle</span>
+            </div>
+            <div class="chart-wrap">
+                <canvas id="chart_0"></canvas>
+            </div>
+        </div>
+        <script>
+        (function() {
+            const ctx = document.getElementById('chart_0').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {"labels": ["2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19", "2026-06-20", "2026-06-21", "2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-27"], "datasets": [{"label": "page_view", "data": [27291, 24722, 25619, 29185, 24537, 18167, 26798, 28204, 22339, 31144, 18985, 23585, 21921], "borderColor": "#1A56A0", "backgroundColor": "#1A56A018", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "author_name", "data": [25356, 23083, 23655, 26711, 22424, 16793, 24581, 25990, 20787, 28893, 17586, 22264, 19386], "borderColor": "#16A34A", "backgroundColor": "#16A34A18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "session_start", "data": [22944, 20024, 21136, 24938, 21102, 14953, 23796, 22977, 18072, 26630, 15041, 19703, 18125], "borderColor": "#D97706", "backgroundColor": "#D9770618", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "first_visit", "data": [21527, 18560, 19630, 23596, 19834, 13956, 22860, 21564, 16579, 25214, 13693, 18526, 17079], "borderColor": "#9333EA", "backgroundColor": "#9333EA18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "user_engagement", "data": [13182, 13331, 13641, 14097, 12833, 11272, 13246, 15991, 13375, 15264, 11352, 12459, 12760], "borderColor": "#DC2626", "backgroundColor": "#DC262618", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "scroll", "data": [11756, 12484, 12160, 11340, 9448, 8878, 8672, 12538, 11727, 12484, 10682, 10115, 9205], "borderColor": "#0891B2", "backgroundColor": "#0891B218", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "internal_link_click", "data": [5892, 6410, 6335, 5516, 4930, 4792, 4409, 6481, 6251, 6031, 5812, 5249, 4928], "borderColor": "#65A30D", "backgroundColor": "#65A30D18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "internal_button_click", "data": [3287, 3427, 3449, 2974, 2832, 3263, 3003, 3289, 3286, 3432, 3127, 3027, 3278], "borderColor": "#EA580C", "backgroundColor": "#EA580C18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "click", "data": [1744, 2036, 1878, 1424, 2073, 1689, 1314, 1773, 1931, 1950, 1906, 1815, 1499], "borderColor": "#7C3AED", "backgroundColor": "#7C3AED18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "error_404", "data": [861, 639, 1009, 906, 902, 744, 769, 1052, 841, 943, 676, 1017, 908], "borderColor": "#DB2777", "backgroundColor": "#DB277718", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}], "split_idx": 7, "split_label": "Week boundary (2026-06-22)"},
+                options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: { boxWidth: 12, font: { size: 11 } }
+            },
+            tooltip: {
+                callbacks: {
+                    label: c => ` ${c.dataset.label}: ${c.parsed.y.toLocaleString()}`
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: { maxTicksLimit: 10, font: { size: 10 }, maxRotation: 45 },
+                grid:  { color: '#f0f0f0' }
+            },
+            y: {
+                beginAtZero: true,
+                ticks: { font: { size: 11 }, callback: v => v.toLocaleString() },
+                grid:  { color: '#f0f0f0' }
+            }
+        }
+    }
+            });
+        })();
+        </script>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <div class="prop-name">AIA</div>
+                <div class="prop-id">analytics_••••••389</div>
+                <div style="margin-top:6px"><span class="prop-type type-ecommerce">ecommerce</span> </div>
+            </div>
+        </div>
+        
+        <div class="two-col">
+            <div>
+                <div class="section-title">🆕 New Events (3)</div>
+                <table>
+                    <tr><th>Event</th><th>Jun 22 - Jun 28</th><th>Jun 15 - Jun 21</th></tr>
+                    
+            <tr>
+                <td>checkout_error</td>
+                <td>1</td>
+                <td>—</td>
+            </tr>
+            <tr>
+                <td>email_click_recruiting</td>
+                <td>1</td>
+                <td>—</td>
+            </tr>
+            <tr>
+                <td>button_click_football_combine_prep</td>
+                <td>1</td>
+                <td>—</td>
+            </tr>
+                </table>
+            </div>
+            <div>
+                <div class="section-title">❌ Dropped Events (6)</div>
+                <table>
+                    <tr><th>Event</th><th>Jun 22 - Jun 28</th><th>Jun 15 - Jun 21</th></tr>
+                    
+            <tr>
+                <td>button_click_residential_experiences</td>
+                <td>—</td>
+                <td>6</td>
+            </tr>
+            <tr>
+                <td>button_click_soccer_residential_teams</td>
+                <td>—</td>
+                <td>3</td>
+            </tr>
+            <tr>
+                <td>form_submission_contact_us_team_building</td>
+                <td>—</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>form_sub_be_an_influencer</td>
+                <td>—</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>button_click_give_wooden_fieldhouse</td>
+                <td>—</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>button_click_baseball_residential_teams</td>
+                <td>—</td>
+                <td>1</td>
+            </tr>
+                </table>
+            </div>
+        </div>
+        <div class="section-title">📊 Event Volume Changes (51 events · top 15 by % change)</div>
+        <table>
+            <tr>
+                <th>Event</th>
+                <th>Jun 15 - Jun 21</th>
+                <th>Jun 22 - Jun 28</th>
+                <th>Change</th>
+            </tr>
+            
+            <tr>
+                <td>add_payment_info</td>
+                <td>1</td>
+                <td>8</td>
+                <td><span class="pct-positive">+700.0%</span></td>
+            </tr>
+            <tr>
+                <td>add_to_cart</td>
+                <td>1</td>
+                <td>7</td>
+                <td><span class="pct-positive">+600.0%</span></td>
+            </tr>
+            <tr>
+                <td>purchase</td>
+                <td>1</td>
+                <td>6</td>
+                <td><span class="pct-positive">+500.0%</span></td>
+            </tr>
+            <tr>
+                <td>button_click_contact_wooden_fieldhouse</td>
+                <td>1</td>
+                <td>3</td>
+                <td><span class="pct-positive">+200.0%</span></td>
+            </tr>
+            <tr>
+                <td>button_click_coach_wooden</td>
+                <td>2</td>
+                <td>5</td>
+                <td><span class="pct-positive">+150.0%</span></td>
+            </tr>
+            <tr>
+                <td>button_click_join_us_read_now</td>
+                <td>5</td>
+                <td>10</td>
+                <td><span class="pct-positive">+100.0%</span></td>
+            </tr>
+            <tr>
+                <td>button_click_sign_up_today_camps</td>
+                <td>1</td>
+                <td>2</td>
+                <td><span class="pct-positive">+100.0%</span></td>
+            </tr>
+            <tr>
+                <td>button_click_volunteer_with_us</td>
+                <td>4</td>
+                <td>7</td>
+                <td><span class="pct-positive">+75.0%</span></td>
+            </tr>
+            <tr>
+                <td>email_click_info</td>
+                <td>7</td>
+                <td>2</td>
+                <td><span class="pct-negative">-71.4%</span></td>
+            </tr>
+            <tr>
+                <td>form_sub_coach_winning_character</td>
+                <td>10</td>
+                <td>4</td>
+                <td><span class="pct-negative">-60.0%</span></td>
+            </tr>
+            <tr>
+                <td>button_click_basketball_prep_teams</td>
+                <td>5</td>
+                <td>2</td>
+                <td><span class="pct-negative">-60.0%</span></td>
+            </tr>
+            <tr>
+                <td>link_click_telephone</td>
+                <td>7</td>
+                <td>3</td>
+                <td><span class="pct-negative">-57.1%</span></td>
+            </tr>
+            <tr>
+                <td>acs_email_sign_up</td>
+                <td>21</td>
+                <td>10</td>
+                <td><span class="pct-negative">-52.4%</span></td>
+            </tr>
+            <tr>
+                <td>button_click_launch_a_community</td>
+                <td>6</td>
+                <td>3</td>
+                <td><span class="pct-negative">-50.0%</span></td>
+            </tr>
+            <tr>
+                <td>form_interaction_campus</td>
+                <td>6</td>
+                <td>9</td>
+                <td><span class="pct-positive">+50.0%</span></td>
+            </tr>
+        </table>
+        <div class="section-title">🔍 (Not Set) Rates — 214 sessions</div>
+        <table>
+            <tr>
+                <th>Dimension</th>
+                <th>Previous</th>
+                <th>Current</th>
+                <th>Change (pp)</th>
+            </tr>
+            
+            <tr>
+                <td>Source / Medium</td>
+                <td>0.0%</td>
+                <td>0.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+            <tr>
+                <td>Source</td>
+                <td>0.0%</td>
+                <td>0.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+            <tr>
+                <td>Campaign</td>
+                <td>2.3%</td>
+                <td>2.8%</td>
+                <td><span class="change-up-bad">↑ +0.5pp</span></td>
+            </tr>
+            <tr>
+                <td>Page Location</td>
+                <td>0.0%</td>
+                <td>0.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+        </table>
+        <div class="section-title">📡 Attribution Health — 2,422 paid sessions</div>
+        <table>
+            <tr>
+                <th>Metric</th><th>Previous</th><th>Current</th><th>Change (pp)</th>
+            </tr>
+            
+            <tr>
+                <td>
+                    UTM Coverage
+                    <small style="color:#999">% of sessions with at least one UTM parameter</small>
+                </td>
+                <td>100.0%</td>
+                <td>100.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    Google Ads gclid Presence
+                    <small style="color:#999">% of all sessions carrying a gclid parameter (auto-tagging health)</small>
+                </td>
+                <td>2.0%</td>
+                <td>1.8%</td>
+                <td><span class="change-down-bad">↓ -0.2pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    Paid Sessions — Missing Attribution
+                    <small style="color:#999">% of sessions from known paid sources arriving with no source/medium</small>
+                </td>
+                <td>0.0%</td>
+                <td>0.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+        </table>
+        
+            <div class="section-title">📣 Active Campaigns (top 10 by sessions)</div>
+            <table>
+                <tr>
+                    <th>Campaign</th><th>Source</th><th>Medium</th><th>Sessions</th>
+                </tr>
+                
+            <tr>
+                <td>(organic)</td>
+                <td>google</td>
+                <td>organic</td>
+                <td>2,247</td>
+            </tr>
+            <tr>
+                <td>(direct)</td>
+                <td>(direct)</td>
+                <td>(none)</td>
+                <td>2,086</td>
+            </tr>
+            <tr>
+                <td>(referral)</td>
+                <td>join.myplaceconnect.net</td>
+                <td>referral</td>
+                <td>86</td>
+            </tr>
+            <tr>
+                <td>(referral)</td>
+                <td>cru.org</td>
+                <td>referral</td>
+                <td>70</td>
+            </tr>
+            <tr>
+                <td>(organic)</td>
+                <td>bing</td>
+                <td>organic</td>
+                <td>53</td>
+            </tr>
+            <tr>
+                <td>AIA - Read</td>
+                <td>google</td>
+                <td>cpc</td>
+                <td>51</td>
+            </tr>
+            <tr>
+                <td>AIA - Get Involved National</td>
+                <td>google</td>
+                <td>cpc</td>
+                <td>37</td>
+            </tr>
+            <tr>
+                <td>(referral)</td>
+                <td>facebook.com</td>
+                <td>referral</td>
+                <td>31</td>
+            </tr>
+            <tr>
+                <td>(referral)</td>
+                <td>empli.fi</td>
+                <td>referral</td>
+                <td>25</td>
+            </tr>
+            <tr>
+                <td>(referral)</td>
+                <td>m.facebook.com</td>
+                <td>referral</td>
+                <td>25</td>
+            </tr>
+            </table>
+        <div class="section-title">✅ Parameter Validity Rates</div>
+        <table>
+            <tr>
+                <th>Event</th>
+                <th>Volume</th>
+                <th>Previous</th>
+                <th>Current</th>
+                <th>Change (pp)</th>
+            </tr>
+            
+            <tr>
+                <td>
+                    <strong>purchase</strong>
+                    <small style="color:#999;display:block">Transaction ID not null/undefined, value > 0, currency present, item_id present</small>
+                </td>
+                <td style="color:#888;font-size:0.8rem">6 fires / 0 valid</td>
+                <td>0.0%</td>
+                <td>0.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>begin_checkout</strong>
+                    <small style="color:#999;display:block">Value > 0 and currency present</small>
+                </td>
+                <td style="color:#888;font-size:0.8rem">82 fires / 0 valid</td>
+                <td>0.0%</td>
+                <td>0.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>page_view</strong>
+                    <small style="color:#999;display:block">page_location present and not empty</small>
+                </td>
+                <td style="color:#888;font-size:0.8rem">9,078 fires / 9,078 valid</td>
+                <td>100.0%</td>
+                <td>100.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+        </table><div class="section-title">🛒 Purchase Parameter Completeness — 6 purchases</div>
+            <div class="section-title" style="margin-top:14px">🔴 Required Parameters</div>
+            <table>
+                <tr><th>Parameter</th><th>Previous</th><th>Current</th><th>Change (pp)</th></tr>
+                
+                <tr>
+                    <td>Transaction ID</td>
+                    <td>0.0%</td>
+                    <td>0.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Revenue (> 0)</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Currency</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+            </table>
+            <div class="section-title" style="margin-top:14px">🟡 Expected Parameters</div>
+            <table>
+                <tr><th>Parameter</th><th>Previous</th><th>Current</th><th>Change (pp)</th></tr>
+                
+                <tr>
+                    <td>Item ID</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Item Name</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Item Quantity</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+            </table>
+            <div class="section-title" style="margin-top:14px">⚪ Optional Parameters</div>
+            <table>
+                <tr><th>Parameter</th><th>Previous</th><th>Current</th><th>Change (pp)</th></tr>
+                
+                <tr>
+                    <td>Item Category</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Coupon</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+            </table>
+            <div class="section-title" style="margin-top:14px">⚠️ Quality Signals</div>
+            <table>
+                <tr><th>Parameter</th><th>Previous</th><th>Current</th><th>Change (pp)</th></tr>
+                
+                <tr>
+                    <td>Zero Revenue</td>
+                    <td>0.0%</td>
+                    <td>0.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Empty Items Array</td>
+                    <td>0.0%</td>
+                    <td>0.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Duplicate Transactions</td>
+                    <td>0.0%</td>
+                    <td>0.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+            </table>
+        <div class="section-title">🛍️ Ecommerce Funnel</div>
+        <div class="funnel-grid">
+            <div class="funnel-step">
+                <div class="funnel-step-name">View Item</div>
+                <div class="funnel-step-count">0</div>
+                <div class="funnel-step-pct">0.0% of sessions</div>
+                <div class="funnel-step-change"><span class="change-neutral">→ 0.0pp</span></div>
+            </div>
+            <div class="funnel-step">
+                <div class="funnel-step-name">Add To Cart</div>
+                <div class="funnel-step-count">4</div>
+                <div class="funnel-step-pct">0.1% of sessions</div>
+                <div class="funnel-step-change"><span class="change-up-good">↑ +0.1pp</span></div>
+            </div>
+            <div class="funnel-step">
+                <div class="funnel-step-name">View Cart</div>
+                <div class="funnel-step-count">0</div>
+                <div class="funnel-step-pct">0.0% of sessions</div>
+                <div class="funnel-step-change"><span class="change-neutral">→ 0.0pp</span></div>
+            </div>
+            <div class="funnel-step">
+                <div class="funnel-step-name">Begin Checkout</div>
+                <div class="funnel-step-count">70</div>
+                <div class="funnel-step-pct">1.4% of sessions</div>
+                <div class="funnel-step-change"><span class="change-down-bad">↓ -0.1pp</span></div>
+            </div>
+            <div class="funnel-step">
+                <div class="funnel-step-name">Purchase</div>
+                <div class="funnel-step-count">4</div>
+                <div class="funnel-step-pct">0.1% of sessions</div>
+                <div class="funnel-step-change"><span class="change-up-good">↑ +0.1pp</span></div>
+            </div></div>
+        
+            <div class="section-title">Step-to-Step Conversion Ratios</div>
+            <table>
+                <tr><th>Step</th><th>Previous</th><th>Current</th><th>Change (pp)</th></tr>
+                
+            <tr>
+                <td>View Item → Add To Cart</td>
+                <td>—</td>
+                <td>—</td>
+                <td><span class="change-neutral">—</span></td>
+            </tr>
+            <tr>
+                <td>Add To Cart → View Cart</td>
+                <td>—</td>
+                <td>—</td>
+                <td><span class="change-neutral">—</span></td>
+            </tr>
+            <tr>
+                <td>View Cart → Begin Checkout</td>
+                <td>—</td>
+                <td>—</td>
+                <td><span class="change-neutral">—</span></td>
+            </tr>
+            <tr>
+                <td>Begin Checkout → Purchase</td>
+                <td>1.2%</td>
+                <td>5.7%</td>
+                <td><span class="change-up-good">↑ +4.5pp</span></td>
+            </tr>
+            </table>
+        <div class="section-title">💰 Revenue Metrics</div>
+        <table>
+            <tr><th>Metric</th><th>Previous</th><th>Current</th><th>Change</th></tr>
+            
+            <tr>
+                <td>Total Purchases</td>
+                <td>1</td>
+                <td>4</td>
+                <td><span class="change-up-good">↑ +300.0%</span></td>
+            </tr>
+            
+            <tr>
+                <td>Total Revenue</td>
+                <td>$100.00</td>
+                <td>$127.55</td>
+                <td><span class="change-up-good">↑ +27.6%</span></td>
+            </tr>
+            
+            <tr>
+                <td>Avg Order Value</td>
+                <td>$100.00</td>
+                <td>$31.89</td>
+                <td><span class="change-down-bad">↓ -68.1%</span></td>
+            </tr>
+            
+        <tr>
+            <td>Purchases with no prior checkout</td>
+            <td>0</td>
+            <td>0</td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td>Purchases with zero revenue</td>
+            <td>0</td>
+            <td>0</td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td>Days with purchases</td>
+            <td>—</td>
+            <td>3 of 7</td>
+            <td>—</td>
+        </tr>
+        </table>
+        <div class="chart-section">
+            <div class="chart-title">
+                📈 Event Volume Trends
+                <span class="chart-sub">Top 10 events · click legend to toggle</span>
+            </div>
+            <div class="chart-wrap">
+                <canvas id="chart_1"></canvas>
+            </div>
+        </div>
+        <script>
+        (function() {
+            const ctx = document.getElementById('chart_1').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {"labels": ["2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19", "2026-06-20", "2026-06-21", "2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-27"], "datasets": [{"label": "page_view", "data": [1656, 1653, 1644, 1405, 1375, 1398, 1271, 1707, 1699, 1515, 1681, 1308, 1168], "borderColor": "#1A56A0", "backgroundColor": "#1A56A018", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "session_start", "data": [890, 961, 820, 852, 856, 640, 680, 981, 930, 840, 899, 699, 612], "borderColor": "#16A34A", "backgroundColor": "#16A34A18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "scroll", "data": [967, 801, 818, 644, 797, 650, 769, 794, 904, 879, 801, 697, 476], "borderColor": "#D97706", "backgroundColor": "#D9770618", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "first_visit", "data": [634, 726, 583, 668, 676, 516, 543, 731, 716, 658, 687, 514, 473], "borderColor": "#9333EA", "backgroundColor": "#9333EA18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "internal_link_click", "data": [675, 676, 630, 523, 473, 425, 310, 631, 648, 582, 621, 528, 437], "borderColor": "#DC2626", "backgroundColor": "#DC262618", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "user_engagement", "data": [664, 653, 637, 467, 405, 360, 316, 649, 556, 518, 560, 414, 416], "borderColor": "#0891B2", "backgroundColor": "#0891B218", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "internal_button_click", "data": [395, 346, 347, 277, 338, 358, 343, 291, 361, 305, 400, 369, 255], "borderColor": "#65A30D", "backgroundColor": "#65A30D18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "video_progress", "data": [420, 307, 343, 284, 364, 166, 238, 336, 314, 292, 206, 225, 318], "borderColor": "#EA580C", "backgroundColor": "#EA580C18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "click", "data": [361, 294, 367, 186, 193, 168, 183, 290, 340, 234, 208, 222, 151], "borderColor": "#7C3AED", "backgroundColor": "#7C3AED18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "video_start", "data": [197, 169, 157, 141, 151, 97, 100, 174, 165, 142, 129, 122, 131], "borderColor": "#DB2777", "backgroundColor": "#DB277718", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}], "split_idx": 7, "split_label": "Week boundary (2026-06-22)"},
+                options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: { boxWidth: 12, font: { size: 11 } }
+            },
+            tooltip: {
+                callbacks: {
+                    label: c => ` ${c.dataset.label}: ${c.parsed.y.toLocaleString()}`
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: { maxTicksLimit: 10, font: { size: 10 }, maxRotation: 45 },
+                grid:  { color: '#f0f0f0' }
+            },
+            y: {
+                beginAtZero: true,
+                ticks: { font: { size: 11 }, callback: v => v.toLocaleString() },
+                grid:  { color: '#f0f0f0' }
+            }
+        }
+    }
+            });
+        })();
+        </script>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <div class="prop-name">JesusFilm</div>
+                <div class="prop-id">analytics_••••••532</div>
+                <div style="margin-top:6px"><span class="prop-type type-ecommerce">ecommerce</span> <span class="prop-type type-lead_gen">lead gen</span> </div>
+            </div>
+        </div>
+        
+        <div class="two-col">
+            <div>
+                <div class="section-title">🆕 New Events (0)</div>
+                <table>
+                    <tr><th>Event</th><th>Jun 22 - Jun 28</th><th>Jun 15 - Jun 21</th></tr>
+                    <tr><td colspan='3' class='empty'>None</td></tr>
+                </table>
+            </div>
+            <div>
+                <div class="section-title">❌ Dropped Events (3)</div>
+                <table>
+                    <tr><th>Event</th><th>Jun 22 - Jun 28</th><th>Jun 15 - Jun 21</th></tr>
+                    
+            <tr>
+                <td>ea_video_play</td>
+                <td>—</td>
+                <td>2</td>
+            </tr>
+            <tr>
+                <td>ea_quiz</td>
+                <td>—</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>ea_video_seek</td>
+                <td>—</td>
+                <td>1</td>
+            </tr>
+                </table>
+            </div>
+        </div>
+        <div class="section-title">📊 Event Volume Changes (48 events · top 15 by % change)</div>
+        <table>
+            <tr>
+                <th>Event</th>
+                <th>Jun 15 - Jun 21</th>
+                <th>Jun 22 - Jun 28</th>
+                <th>Change</th>
+            </tr>
+            
+            <tr>
+                <td>ea_video_exit_full_screen</td>
+                <td>2</td>
+                <td>5</td>
+                <td><span class="pct-positive">+150.0%</span></td>
+            </tr>
+            <tr>
+                <td>search</td>
+                <td>17</td>
+                <td>1</td>
+                <td><span class="pct-negative">-94.1%</span></td>
+            </tr>
+            <tr>
+                <td>ea_video_auto_play</td>
+                <td>26</td>
+                <td>7</td>
+                <td><span class="pct-negative">-73.1%</span></td>
+            </tr>
+            <tr>
+                <td>ea_video_pause</td>
+                <td>2</td>
+                <td>1</td>
+                <td><span class="pct-negative">-50.0%</span></td>
+            </tr>
+            <tr>
+                <td>videocomplete</td>
+                <td>4</td>
+                <td>6</td>
+                <td><span class="pct-positive">+50.0%</span></td>
+            </tr>
+            <tr>
+                <td>video_complete</td>
+                <td>115</td>
+                <td>58</td>
+                <td><span class="pct-negative">-49.6%</span></td>
+            </tr>
+            <tr>
+                <td>yt_video_complete</td>
+                <td>238</td>
+                <td>121</td>
+                <td><span class="pct-negative">-49.2%</span></td>
+            </tr>
+            <tr>
+                <td>Email_sign_ups</td>
+                <td>26</td>
+                <td>38</td>
+                <td><span class="pct-positive">+46.1%</span></td>
+            </tr>
+            <tr>
+                <td>yt_video_progress90</td>
+                <td>143</td>
+                <td>79</td>
+                <td><span class="pct-negative">-44.8%</span></td>
+            </tr>
+            <tr>
+                <td>yt_video_progress50</td>
+                <td>320</td>
+                <td>177</td>
+                <td><span class="pct-negative">-44.7%</span></td>
+            </tr>
+            <tr>
+                <td>video_progress</td>
+                <td>648</td>
+                <td>363</td>
+                <td><span class="pct-negative">-44.0%</span></td>
+            </tr>
+            <tr>
+                <td>yt_video_progress75</td>
+                <td>296</td>
+                <td>169</td>
+                <td><span class="pct-negative">-42.9%</span></td>
+            </tr>
+            <tr>
+                <td>checkout_error</td>
+                <td>53</td>
+                <td>31</td>
+                <td><span class="pct-negative">-41.5%</span></td>
+            </tr>
+            <tr>
+                <td>yt_video_progress25</td>
+                <td>336</td>
+                <td>200</td>
+                <td><span class="pct-negative">-40.5%</span></td>
+            </tr>
+            <tr>
+                <td>yt_video_progress10</td>
+                <td>371</td>
+                <td>222</td>
+                <td><span class="pct-negative">-40.2%</span></td>
+            </tr>
+        </table>
+        <div class="section-title">🔍 (Not Set) Rates — 687 sessions</div>
+        <table>
+            <tr>
+                <th>Dimension</th>
+                <th>Previous</th>
+                <th>Current</th>
+                <th>Change (pp)</th>
+            </tr>
+            
+            <tr>
+                <td>Source / Medium</td>
+                <td>2.0%</td>
+                <td>1.9%</td>
+                <td><span class="change-down-good">↓ -0.1pp</span></td>
+            </tr>
+            <tr>
+                <td>Source</td>
+                <td>2.0%</td>
+                <td>2.0%</td>
+                <td><span class="change-up-bad">↑ +0.1pp</span></td>
+            </tr>
+            <tr>
+                <td>Campaign</td>
+                <td>2.4%</td>
+                <td>1.9%</td>
+                <td><span class="change-down-good">↓ -0.5pp</span></td>
+            </tr>
+            <tr>
+                <td>Page Location</td>
+                <td>0.0%</td>
+                <td>0.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+        </table>
+        <div class="section-title">📡 Attribution Health — 21,955 paid sessions</div>
+        <table>
+            <tr>
+                <th>Metric</th><th>Previous</th><th>Current</th><th>Change (pp)</th>
+            </tr>
+            
+            <tr>
+                <td>
+                    UTM Coverage
+                    <small style="color:#999">% of sessions with at least one UTM parameter</small>
+                </td>
+                <td>100.0%</td>
+                <td>100.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    Google Ads gclid Presence
+                    <small style="color:#999">% of all sessions carrying a gclid parameter (auto-tagging health)</small>
+                </td>
+                <td>0.6%</td>
+                <td>0.5%</td>
+                <td><span class="change-down-bad">↓ -0.1pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    Paid Sessions — Missing Attribution
+                    <small style="color:#999">% of sessions from known paid sources arriving with no source/medium</small>
+                </td>
+                <td>0.0%</td>
+                <td>0.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+        </table>
+        
+            <div class="section-title">📣 Active Campaigns (top 10 by sessions)</div>
+            <table>
+                <tr>
+                    <th>Campaign</th><th>Source</th><th>Medium</th><th>Sessions</th>
+                </tr>
+                
+            <tr>
+                <td>(organic)</td>
+                <td>google</td>
+                <td>organic</td>
+                <td>17,291</td>
+            </tr>
+            <tr>
+                <td>(direct)</td>
+                <td>(direct)</td>
+                <td>(none)</td>
+                <td>9,906</td>
+            </tr>
+            <tr>
+                <td>52545640243688</td>
+                <td>fb</td>
+                <td>paid</td>
+                <td>1,053</td>
+            </tr>
+            <tr>
+                <td>52554063536261</td>
+                <td>fb</td>
+                <td>paid</td>
+                <td>891</td>
+            </tr>
+            <tr>
+                <td>52545021376488</td>
+                <td>fb</td>
+                <td>paid</td>
+                <td>859</td>
+            </tr>
+            <tr>
+                <td>summer_tour_ads_meta</td>
+                <td>facebook.com</td>
+                <td>social</td>
+                <td>709</td>
+            </tr>
+            <tr>
+                <td>(referral)</td>
+                <td>m.facebook.com</td>
+                <td>referral</td>
+                <td>579</td>
+            </tr>
+            <tr>
+                <td>52545640243688</td>
+                <td>ig</td>
+                <td>paid</td>
+                <td>517</td>
+            </tr>
+            <tr>
+                <td>52545021376488</td>
+                <td>ig</td>
+                <td>paid</td>
+                <td>421</td>
+            </tr>
+            <tr>
+                <td>(referral)</td>
+                <td>facebook.com</td>
+                <td>referral</td>
+                <td>325</td>
+            </tr>
+            </table>
+        <div class="section-title">✅ Parameter Validity Rates</div>
+        <table>
+            <tr>
+                <th>Event</th>
+                <th>Volume</th>
+                <th>Previous</th>
+                <th>Current</th>
+                <th>Change (pp)</th>
+            </tr>
+            
+            <tr>
+                <td>
+                    <strong>purchase</strong>
+                    <small style="color:#999;display:block">Transaction ID not null/undefined, value > 0, currency present, item_id present</small>
+                </td>
+                <td style="color:#888;font-size:0.8rem">67 fires / 67 valid</td>
+                <td>100.0%</td>
+                <td>100.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>begin_checkout</strong>
+                    <small style="color:#999;display:block">Value > 0 and currency present</small>
+                </td>
+                <td style="color:#888;font-size:0.8rem">252 fires / 0 valid</td>
+                <td>0.0%</td>
+                <td>0.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>form_submit</strong>
+                    <small style="color:#999;display:block">form_id or form_name present</small>
+                </td>
+                <td style="color:#888;font-size:0.8rem">168 fires / 29 valid</td>
+                <td>11.2%</td>
+                <td>17.3%</td>
+                <td><span class="change-up-good">↑ +6.1pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>form_start</strong>
+                    <small style="color:#999;display:block">form_id or form_name present</small>
+                </td>
+                <td style="color:#888;font-size:0.8rem">946 fires / 190 valid</td>
+                <td>17.2%</td>
+                <td>20.1%</td>
+                <td><span class="change-up-good">↑ +2.9pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>page_view</strong>
+                    <small style="color:#999;display:block">page_location present and not empty</small>
+                </td>
+                <td style="color:#888;font-size:0.8rem">54,464 fires / 54,464 valid</td>
+                <td>100.0%</td>
+                <td>100.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+        </table><div class="section-title">🛒 Purchase Parameter Completeness — 67 purchases</div>
+            <div class="section-title" style="margin-top:14px">🔴 Required Parameters</div>
+            <table>
+                <tr><th>Parameter</th><th>Previous</th><th>Current</th><th>Change (pp)</th></tr>
+                
+                <tr>
+                    <td>Transaction ID</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Revenue (> 0)</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Currency</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+            </table>
+            <div class="section-title" style="margin-top:14px">🟡 Expected Parameters</div>
+            <table>
+                <tr><th>Parameter</th><th>Previous</th><th>Current</th><th>Change (pp)</th></tr>
+                
+                <tr>
+                    <td>Item ID</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Item Name</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Item Quantity</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+            </table>
+            <div class="section-title" style="margin-top:14px">⚪ Optional Parameters</div>
+            <table>
+                <tr><th>Parameter</th><th>Previous</th><th>Current</th><th>Change (pp)</th></tr>
+                
+                <tr>
+                    <td>Item Category</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Coupon</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+            </table>
+            <div class="section-title" style="margin-top:14px">⚠️ Quality Signals</div>
+            <table>
+                <tr><th>Parameter</th><th>Previous</th><th>Current</th><th>Change (pp)</th></tr>
+                
+                <tr>
+                    <td>Zero Revenue</td>
+                    <td>0.0%</td>
+                    <td>0.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Empty Items Array</td>
+                    <td>0.0%</td>
+                    <td>0.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Duplicate Transactions</td>
+                    <td>0.0%</td>
+                    <td>0.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+            </table>
+        <div class="section-title">🛍️ Ecommerce Funnel</div>
+        <div class="funnel-grid">
+            <div class="funnel-step">
+                <div class="funnel-step-name">View Item</div>
+                <div class="funnel-step-count">0</div>
+                <div class="funnel-step-pct">0.0% of sessions</div>
+                <div class="funnel-step-change"><span class="change-neutral">→ 0.0pp</span></div>
+            </div>
+            <div class="funnel-step">
+                <div class="funnel-step-name">Add To Cart</div>
+                <div class="funnel-step-count">70</div>
+                <div class="funnel-step-pct">0.2% of sessions</div>
+                <div class="funnel-step-change"><span class="change-up-good">↑ +0.0pp</span></div>
+            </div>
+            <div class="funnel-step">
+                <div class="funnel-step-name">View Cart</div>
+                <div class="funnel-step-count">0</div>
+                <div class="funnel-step-pct">0.0% of sessions</div>
+                <div class="funnel-step-change"><span class="change-neutral">→ 0.0pp</span></div>
+            </div>
+            <div class="funnel-step">
+                <div class="funnel-step-name">Begin Checkout</div>
+                <div class="funnel-step-count">204</div>
+                <div class="funnel-step-pct">0.6% of sessions</div>
+                <div class="funnel-step-change"><span class="change-down-bad">↓ -0.1pp</span></div>
+            </div>
+            <div class="funnel-step">
+                <div class="funnel-step-name">Purchase</div>
+                <div class="funnel-step-count">67</div>
+                <div class="funnel-step-pct">0.2% of sessions</div>
+                <div class="funnel-step-change"><span class="change-up-good">↑ +0.0pp</span></div>
+            </div></div>
+        
+            <div class="section-title">Step-to-Step Conversion Ratios</div>
+            <table>
+                <tr><th>Step</th><th>Previous</th><th>Current</th><th>Change (pp)</th></tr>
+                
+            <tr>
+                <td>View Item → Add To Cart</td>
+                <td>—</td>
+                <td>—</td>
+                <td><span class="change-neutral">—</span></td>
+            </tr>
+            <tr>
+                <td>Add To Cart → View Cart</td>
+                <td>—</td>
+                <td>—</td>
+                <td><span class="change-neutral">—</span></td>
+            </tr>
+            <tr>
+                <td>View Cart → Begin Checkout</td>
+                <td>—</td>
+                <td>—</td>
+                <td><span class="change-neutral">—</span></td>
+            </tr>
+            <tr>
+                <td>Begin Checkout → Purchase</td>
+                <td>23.9%</td>
+                <td>32.8%</td>
+                <td><span class="change-up-good">↑ +9.0pp</span></td>
+            </tr>
+            </table>
+        <div class="section-title">💰 Revenue Metrics</div>
+        <table>
+            <tr><th>Metric</th><th>Previous</th><th>Current</th><th>Change</th></tr>
+            
+            <tr>
+                <td>Total Purchases</td>
+                <td>62</td>
+                <td>67</td>
+                <td><span class="change-up-good">↑ +8.1%</span></td>
+            </tr>
+            
+            <tr>
+                <td>Total Revenue</td>
+                <td>$22,139.41</td>
+                <td>$34,420.85</td>
+                <td><span class="change-up-good">↑ +55.5%</span></td>
+            </tr>
+            
+            <tr>
+                <td>Avg Order Value</td>
+                <td>$357.09</td>
+                <td>$513.74</td>
+                <td><span class="change-up-good">↑ +43.9%</span></td>
+            </tr>
+            
+        <tr>
+            <td>Purchases with no prior checkout</td>
+            <td>0</td>
+            <td>0</td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td>Purchases with zero revenue</td>
+            <td>0</td>
+            <td>0</td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td>Days with purchases</td>
+            <td>—</td>
+            <td>6 of 7</td>
+            <td>—</td>
+        </tr>
+        </table>
+        <div class="chart-section">
+            <div class="chart-title">
+                📈 Event Volume Trends
+                <span class="chart-sub">Top 10 events · click legend to toggle</span>
+            </div>
+            <div class="chart-wrap">
+                <canvas id="chart_2"></canvas>
+            </div>
+        </div>
+        <script>
+        (function() {
+            const ctx = document.getElementById('chart_2').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {"labels": ["2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19", "2026-06-20", "2026-06-21", "2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-27"], "datasets": [{"label": "page_view", "data": [8852, 9858, 9110, 8713, 8272, 8320, 7572, 8738, 10141, 9484, 8900, 8622, 9528], "borderColor": "#1A56A0", "backgroundColor": "#1A56A018", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "session_start", "data": [5805, 5860, 5941, 5498, 5268, 5673, 5179, 5729, 6614, 6384, 6348, 5862, 6263], "borderColor": "#16A34A", "backgroundColor": "#16A34A18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "video_pause", "data": [5567, 7261, 5836, 5902, 4962, 4079, 4707, 5235, 4918, 5111, 4853, 4470, 5467], "borderColor": "#D97706", "backgroundColor": "#D9770618", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "first_visit", "data": [4153, 4162, 4274, 3942, 3855, 4338, 3931, 4210, 5089, 4781, 4773, 4412, 4822], "borderColor": "#9333EA", "backgroundColor": "#9333EA18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "videoplay", "data": [4501, 5966, 4614, 4759, 3888, 2925, 3657, 4203, 3843, 3806, 3816, 3467, 4356], "borderColor": "#DC2626", "backgroundColor": "#DC262618", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "videostarts", "data": [3469, 4047, 3575, 3634, 3300, 3349, 3218, 3617, 3867, 4124, 3727, 3648, 4033], "borderColor": "#0891B2", "backgroundColor": "#0891B218", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "user_engagement", "data": [2491, 2581, 2580, 2430, 2155, 2227, 1897, 2452, 2470, 2454, 2424, 2264, 2477], "borderColor": "#65A30D", "backgroundColor": "#65A30D18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "link_click", "data": [1875, 2416, 2113, 2111, 1688, 1623, 1979, 2005, 2824, 2158, 1691, 1722, 1861], "borderColor": "#EA580C", "backgroundColor": "#EA580C18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "button_click", "data": [2035, 2175, 1858, 2007, 1695, 1829, 1786, 1982, 1732, 1871, 1788, 1693, 2063], "borderColor": "#7C3AED", "backgroundColor": "#7C3AED18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "scroll", "data": [1551, 1726, 1714, 1537, 1306, 1332, 1151, 1574, 1546, 1557, 1456, 1460, 1499], "borderColor": "#DB2777", "backgroundColor": "#DB277718", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}], "split_idx": 7, "split_label": "Week boundary (2026-06-22)"},
+                options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: { boxWidth: 12, font: { size: 11 } }
+            },
+            tooltip: {
+                callbacks: {
+                    label: c => ` ${c.dataset.label}: ${c.parsed.y.toLocaleString()}`
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: { maxTicksLimit: 10, font: { size: 10 }, maxRotation: 45 },
+                grid:  { color: '#f0f0f0' }
+            },
+            y: {
+                beginAtZero: true,
+                ticks: { font: { size: 11 }, callback: v => v.toLocaleString() },
+                grid:  { color: '#f0f0f0' }
+            }
+        }
+    }
+            });
+        })();
+        </script>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <div class="prop-name">Familylife</div>
+                <div class="prop-id">analytics_••••••268</div>
+                <div style="margin-top:6px"><span class="prop-type type-ecommerce">ecommerce</span> <span class="prop-type type-lead_gen">lead gen</span> </div>
+            </div>
+        </div>
+        
+        <div class="two-col">
+            <div>
+                <div class="section-title">🆕 New Events (0)</div>
+                <table>
+                    <tr><th>Event</th><th>Jun 22 - Jun 28</th><th>Jun 15 - Jun 21</th></tr>
+                    <tr><td colspan='3' class='empty'>None</td></tr>
+                </table>
+            </div>
+            <div>
+                <div class="section-title">❌ Dropped Events (1)</div>
+                <table>
+                    <tr><th>Event</th><th>Jun 22 - Jun 28</th><th>Jun 15 - Jun 21</th></tr>
+                    
+            <tr>
+                <td>donor_purchase</td>
+                <td>—</td>
+                <td>1</td>
+            </tr>
+                </table>
+            </div>
+        </div>
+        <div class="section-title">📊 Event Volume Changes (42 events · top 15 by % change)</div>
+        <table>
+            <tr>
+                <th>Event</th>
+                <th>Jun 15 - Jun 21</th>
+                <th>Jun 22 - Jun 28</th>
+                <th>Change</th>
+            </tr>
+            
+            <tr>
+                <td>sign_up</td>
+                <td>775</td>
+                <td>1,957</td>
+                <td><span class="pct-positive">+152.5%</span></td>
+            </tr>
+            <tr>
+                <td>experience_impression</td>
+                <td>8,325</td>
+                <td>20,794</td>
+                <td><span class="pct-positive">+149.8%</span></td>
+            </tr>
+            <tr>
+                <td>email_capture</td>
+                <td>1,391</td>
+                <td>2,570</td>
+                <td><span class="pct-positive">+84.8%</span></td>
+            </tr>
+            <tr>
+                <td>video_complete</td>
+                <td>4</td>
+                <td>7</td>
+                <td><span class="pct-positive">+75.0%</span></td>
+            </tr>
+            <tr>
+                <td>aom_videos_toggle_familylife_website</td>
+                <td>31</td>
+                <td>8</td>
+                <td><span class="pct-negative">-74.2%</span></td>
+            </tr>
+            <tr>
+                <td>begin_checkout</td>
+                <td>2,115</td>
+                <td>3,311</td>
+                <td><span class="pct-positive">+56.5%</span></td>
+            </tr>
+            <tr>
+                <td>refund</td>
+                <td>26</td>
+                <td>12</td>
+                <td><span class="pct-negative">-53.9%</span></td>
+            </tr>
+            <tr>
+                <td>view_cart</td>
+                <td>2,131</td>
+                <td>1,109</td>
+                <td><span class="pct-negative">-48.0%</span></td>
+            </tr>
+            <tr>
+                <td>aom_videos_toggle_another_retailer</td>
+                <td>14</td>
+                <td>8</td>
+                <td><span class="pct-negative">-42.9%</span></td>
+            </tr>
+            <tr>
+                <td>error_404</td>
+                <td>2,975</td>
+                <td>1,952</td>
+                <td><span class="pct-negative">-34.4%</span></td>
+            </tr>
+            <tr>
+                <td>donation_type</td>
+                <td>321</td>
+                <td>428</td>
+                <td><span class="pct-positive">+33.3%</span></td>
+            </tr>
+            <tr>
+                <td>step_2_cvent_event_page</td>
+                <td>2,988</td>
+                <td>2,050</td>
+                <td><span class="pct-negative">-31.4%</span></td>
+            </tr>
+            <tr>
+                <td>equip_sign_up</td>
+                <td>11</td>
+                <td>8</td>
+                <td><span class="pct-negative">-27.3%</span></td>
+            </tr>
+            <tr>
+                <td>add_shipping_info</td>
+                <td>155</td>
+                <td>113</td>
+                <td><span class="pct-negative">-27.1%</span></td>
+            </tr>
+            <tr>
+                <td>step_5_add_payment</td>
+                <td>134</td>
+                <td>99</td>
+                <td><span class="pct-negative">-26.1%</span></td>
+            </tr>
+        </table>
+        <div class="section-title">🔍 (Not Set) Rates — 1,641 sessions</div>
+        <table>
+            <tr>
+                <th>Dimension</th>
+                <th>Previous</th>
+                <th>Current</th>
+                <th>Change (pp)</th>
+            </tr>
+            
+            <tr>
+                <td>Source / Medium</td>
+                <td>1.0%</td>
+                <td>1.0%</td>
+                <td><span class="change-up-bad">↑ +0.0pp</span></td>
+            </tr>
+            <tr>
+                <td>Source</td>
+                <td>1.0%</td>
+                <td>1.2%</td>
+                <td><span class="change-up-bad">↑ +0.2pp</span></td>
+            </tr>
+            <tr>
+                <td>Campaign</td>
+                <td>1.4%</td>
+                <td>1.4%</td>
+                <td><span class="change-down-good">↓ -0.0pp</span></td>
+            </tr>
+            <tr>
+                <td>Page Location</td>
+                <td>0.0%</td>
+                <td>0.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+        </table>
+        <div class="section-title">📡 Attribution Health — 32,941 paid sessions</div>
+        <table>
+            <tr>
+                <th>Metric</th><th>Previous</th><th>Current</th><th>Change (pp)</th>
+            </tr>
+            
+            <tr>
+                <td>
+                    UTM Coverage
+                    <small style="color:#999">% of sessions with at least one UTM parameter</small>
+                </td>
+                <td>99.9%</td>
+                <td>99.9%</td>
+                <td><span class="change-up-good">↑ +0.0pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    Google Ads gclid Presence
+                    <small style="color:#999">% of all sessions carrying a gclid parameter (auto-tagging health)</small>
+                </td>
+                <td>4.7%</td>
+                <td>4.0%</td>
+                <td><span class="change-down-bad">↓ -0.7pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    Paid Sessions — Missing Attribution
+                    <small style="color:#999">% of sessions from known paid sources arriving with no source/medium</small>
+                </td>
+                <td>0.0%</td>
+                <td>0.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+        </table>
+        
+            <div class="section-title">📣 Active Campaigns (top 10 by sessions)</div>
+            <table>
+                <tr>
+                    <th>Campaign</th><th>Source</th><th>Medium</th><th>Sessions</th>
+                </tr>
+                
+            <tr>
+                <td>(direct)</td>
+                <td>(direct)</td>
+                <td>(none)</td>
+                <td>46,880</td>
+            </tr>
+            <tr>
+                <td>(organic)</td>
+                <td>google</td>
+                <td>organic</td>
+                <td>18,658</td>
+            </tr>
+            <tr>
+                <td>paid</td>
+                <td>facebook</td>
+                <td>paid</td>
+                <td>4,071</td>
+            </tr>
+            <tr>
+                <td>ith-20260621</td>
+                <td>con</td>
+                <td>email-n</td>
+                <td>1,970</td>
+            </tr>
+            <tr>
+                <td>BP | WTR Brand | PMAX</td>
+                <td>google</td>
+                <td>cpc</td>
+                <td>1,860</td>
+            </tr>
+            <tr>
+                <td>wtr</td>
+                <td>facebook</td>
+                <td>cpc</td>
+                <td>1,307</td>
+            </tr>
+            <tr>
+                <td>R~DECAET_DANEM~</td>
+                <td>R~DECAET_DANEM~</td>
+                <td>email</td>
+                <td>1,129</td>
+            </tr>
+            <tr>
+                <td>email-20260623</td>
+                <td>don</td>
+                <td>email-n</td>
+                <td>948</td>
+            </tr>
+            <tr>
+                <td>BP | WTR Brand | Search</td>
+                <td>google</td>
+                <td>cpc</td>
+                <td>743</td>
+            </tr>
+            <tr>
+                <td>eventsawareness</td>
+                <td>FamilyLife</td>
+                <td>email-062526</td>
+                <td>691</td>
+            </tr>
+            </table>
+        <div class="section-title">✅ Parameter Validity Rates</div>
+        <table>
+            <tr>
+                <th>Event</th>
+                <th>Volume</th>
+                <th>Previous</th>
+                <th>Current</th>
+                <th>Change (pp)</th>
+            </tr>
+            
+            <tr>
+                <td>
+                    <strong>purchase</strong>
+                    <small style="color:#999;display:block">Transaction ID not null/undefined, value > 0, currency present, item_id present</small>
+                </td>
+                <td style="color:#888;font-size:0.8rem">420 fires / 182 valid</td>
+                <td>41.8%</td>
+                <td>43.3%</td>
+                <td><span class="change-up-good">↑ +1.6pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>begin_checkout</strong>
+                    <small style="color:#999;display:block">Value > 0 and currency present</small>
+                </td>
+                <td style="color:#888;font-size:0.8rem">3,311 fires / 0 valid</td>
+                <td>0.0%</td>
+                <td>0.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>add_to_cart</strong>
+                    <small style="color:#999;display:block">Item ID present and value > 0</small>
+                </td>
+                <td style="color:#888;font-size:0.8rem">365 fires / 0 valid</td>
+                <td>0.0%</td>
+                <td>0.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>view_item</strong>
+                    <small style="color:#999;display:block">Item ID and item name present</small>
+                </td>
+                <td style="color:#888;font-size:0.8rem">6,338 fires / 6,338 valid</td>
+                <td>100.0%</td>
+                <td>100.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>page_view</strong>
+                    <small style="color:#999;display:block">page_location present and not empty</small>
+                </td>
+                <td style="color:#888;font-size:0.8rem">138,864 fires / 138,864 valid</td>
+                <td>100.0%</td>
+                <td>100.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+        </table><div class="section-title">🛒 Purchase Parameter Completeness — 420 purchases</div>
+            <div class="section-title" style="margin-top:14px">🔴 Required Parameters</div>
+            <table>
+                <tr><th>Parameter</th><th>Previous</th><th>Current</th><th>Change (pp)</th></tr>
+                
+                <tr>
+                    <td>Transaction ID</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Revenue (> 0)</td>
+                    <td>41.8%</td>
+                    <td>43.3%</td>
+                    <td><span class="change-up-good">↑ +1.6pp</span></td>
+                </tr>
+                <tr>
+                    <td>Currency</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+            </table>
+            <div class="section-title" style="margin-top:14px">🟡 Expected Parameters</div>
+            <table>
+                <tr><th>Parameter</th><th>Previous</th><th>Current</th><th>Change (pp)</th></tr>
+                
+                <tr>
+                    <td>Item ID</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Item Name</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Item Quantity</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+            </table>
+            <div class="section-title" style="margin-top:14px">⚪ Optional Parameters</div>
+            <table>
+                <tr><th>Parameter</th><th>Previous</th><th>Current</th><th>Change (pp)</th></tr>
+                
+                <tr>
+                    <td>Item Category</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Coupon</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+            </table>
+            <div class="section-title" style="margin-top:14px">⚠️ Quality Signals</div>
+            <table>
+                <tr><th>Parameter</th><th>Previous</th><th>Current</th><th>Change (pp)</th></tr>
+                
+                <tr>
+                    <td>Zero Revenue</td>
+                    <td>58.2%</td>
+                    <td>56.7%</td>
+                    <td><span class="change-down-good">↓ -1.6pp</span></td>
+                </tr>
+                <tr>
+                    <td>Empty Items Array</td>
+                    <td>0.0%</td>
+                    <td>0.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Duplicate Transactions</td>
+                    <td>0.0%</td>
+                    <td>0.5%</td>
+                    <td><span class="change-up-bad">↑ +0.5pp</span></td>
+                </tr>
+            </table>
+        <div class="section-title">🛍️ Ecommerce Funnel</div>
+        <div class="funnel-grid">
+            <div class="funnel-step">
+                <div class="funnel-step-name">View Item</div>
+                <div class="funnel-step-count">4,559</div>
+                <div class="funnel-step-pct">5.2% of sessions</div>
+                <div class="funnel-step-change"><span class="change-up-good">↑ +1.6pp</span></div>
+            </div>
+            <div class="funnel-step">
+                <div class="funnel-step-name">Add To Cart</div>
+                <div class="funnel-step-count">202</div>
+                <div class="funnel-step-pct">0.2% of sessions</div>
+                <div class="funnel-step-change"><span class="change-down-bad">↓ -0.0pp</span></div>
+            </div>
+            <div class="funnel-step">
+                <div class="funnel-step-name">View Cart</div>
+                <div class="funnel-step-count">283</div>
+                <div class="funnel-step-pct">0.3% of sessions</div>
+                <div class="funnel-step-change"><span class="change-down-bad">↓ -1.1pp</span></div>
+            </div>
+            <div class="funnel-step">
+                <div class="funnel-step-name">Begin Checkout</div>
+                <div class="funnel-step-count">2,760</div>
+                <div class="funnel-step-pct">3.1% of sessions</div>
+                <div class="funnel-step-change"><span class="change-up-good">↑ +1.5pp</span></div>
+            </div>
+            <div class="funnel-step">
+                <div class="funnel-step-name">Purchase</div>
+                <div class="funnel-step-count">354</div>
+                <div class="funnel-step-pct">0.4% of sessions</div>
+                <div class="funnel-step-change"><span class="change-down-bad">↓ -0.1pp</span></div>
+            </div></div>
+        
+            <div class="section-title">Step-to-Step Conversion Ratios</div>
+            <table>
+                <tr><th>Step</th><th>Previous</th><th>Current</th><th>Change (pp)</th></tr>
+                
+            <tr>
+                <td>View Item → Add To Cart</td>
+                <td>7.1%</td>
+                <td>4.4%</td>
+                <td><span class="change-down-bad">↓ -2.7pp</span></td>
+            </tr>
+            <tr>
+                <td>Add To Cart → View Cart</td>
+                <td>550.9%</td>
+                <td>140.1%</td>
+                <td><span class="change-down-bad">↓ -410.8pp</span></td>
+            </tr>
+            <tr>
+                <td>View Cart → Begin Checkout</td>
+                <td>114.5%</td>
+                <td>975.3%</td>
+                <td><span class="change-up-good">↑ +860.8pp</span></td>
+            </tr>
+            <tr>
+                <td>Begin Checkout → Purchase</td>
+                <td>28.4%</td>
+                <td>12.8%</td>
+                <td><span class="change-down-bad">↓ -15.6pp</span></td>
+            </tr>
+            </table>
+        <div class="section-title">💰 Revenue Metrics</div>
+        <table>
+            <tr><th>Metric</th><th>Previous</th><th>Current</th><th>Change</th></tr>
+            
+            <tr>
+                <td>Total Purchases</td>
+                <td>463</td>
+                <td>380</td>
+                <td><span class="change-down-bad">↓ -17.9%</span></td>
+            </tr>
+            
+            <tr>
+                <td>Total Revenue</td>
+                <td>$25,313.22</td>
+                <td>$112,237.87</td>
+                <td><span class="change-up-good">↑ +343.4%</span></td>
+            </tr>
+            
+            <tr>
+                <td>Avg Order Value</td>
+                <td>$124.08</td>
+                <td>$645.05</td>
+                <td><span class="change-up-good">↑ +419.9%</span></td>
+            </tr>
+            
+        <tr>
+            <td>Purchases with no prior checkout</td>
+            <td>182</td>
+            <td>141</td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td>Purchases with zero revenue</td>
+            <td>259</td>
+            <td>206</td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td>Days with purchases</td>
+            <td>—</td>
+            <td>6 of 7</td>
+            <td>—</td>
+        </tr>
+        </table>
+        <div class="chart-section">
+            <div class="chart-title">
+                📈 Event Volume Trends
+                <span class="chart-sub">Top 10 events · click legend to toggle</span>
+            </div>
+            <div class="chart-wrap">
+                <canvas id="chart_3"></canvas>
+            </div>
+        </div>
+        <script>
+        (function() {
+            const ctx = document.getElementById('chart_3').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {"labels": ["2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19", "2026-06-20", "2026-06-21", "2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-27"], "datasets": [{"label": "scroll", "data": [41684, 36885, 36138, 38175, 37078, 28646, 39472, 47033, 45182, 38438, 42189, 42989, 45766], "borderColor": "#1A56A0", "backgroundColor": "#1A56A018", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "page_view", "data": [21345, 20532, 20563, 21239, 20886, 16309, 23922, 25572, 23449, 20452, 23440, 22761, 23190], "borderColor": "#16A34A", "backgroundColor": "#16A34A18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "session_start", "data": [14926, 14827, 15034, 15251, 15244, 12729, 17909, 17593, 16475, 15295, 17092, 16361, 17712], "borderColor": "#D97706", "backgroundColor": "#D9770618", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "first_visit", "data": [11978, 11441, 12069, 12277, 12334, 10247, 14443, 13487, 13000, 12213, 13741, 13474, 15298], "borderColor": "#9333EA", "backgroundColor": "#9333EA18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "user_engagement", "data": [14698, 13654, 11799, 11040, 8984, 9451, 12031, 14274, 13592, 10832, 11818, 12761, 10944], "borderColor": "#DC2626", "backgroundColor": "#DC262618", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "internal_button_click", "data": [6346, 6548, 6006, 5806, 5310, 6456, 6772, 7041, 7011, 5736, 6870, 6071, 5456], "borderColor": "#0891B2", "backgroundColor": "#0891B218", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "view_item_list", "data": [4328, 2355, 4552, 7416, 6498, 1337, 6505, 7805, 6996, 3295, 6274, 7058, 7390], "borderColor": "#65A30D", "backgroundColor": "#65A30D18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "internal_link_click", "data": [4309, 4138, 3739, 3325, 2937, 2805, 3076, 4483, 3290, 3489, 4266, 3239, 2882], "borderColor": "#EA580C", "backgroundColor": "#EA580C18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "step_1_weekend_to_remember", "data": [2902, 3052, 2451, 2419, 2716, 2409, 2490, 2970, 2553, 2376, 2657, 2722, 2622], "borderColor": "#7C3AED", "backgroundColor": "#7C3AED18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "experience_impression", "data": [3619, 2205, 1491, 22, 183, 362, 443, 2532, 3876, 2173, 3704, 4120, 4389], "borderColor": "#DB2777", "backgroundColor": "#DB277718", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}], "split_idx": 7, "split_label": "Week boundary (2026-06-22)"},
+                options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: { boxWidth: 12, font: { size: 11 } }
+            },
+            tooltip: {
+                callbacks: {
+                    label: c => ` ${c.dataset.label}: ${c.parsed.y.toLocaleString()}`
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: { maxTicksLimit: 10, font: { size: 10 }, maxRotation: 45 },
+                grid:  { color: '#f0f0f0' }
+            },
+            y: {
+                beginAtZero: true,
+                ticks: { font: { size: 11 }, callback: v => v.toLocaleString() },
+                grid:  { color: '#f0f0f0' }
+            }
+        }
+    }
+            });
+        })();
+        </script>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <div class="prop-name">Give Site</div>
+                <div class="prop-id">analytics_••••••413</div>
+                <div style="margin-top:6px"><span class="prop-type type-ecommerce">ecommerce</span> </div>
+            </div>
+        </div>
+        
+        <div class="two-col">
+            <div>
+                <div class="section-title">🆕 New Events (0)</div>
+                <table>
+                    <tr><th>Event</th><th>Jun 22 - Jun 28</th><th>Jun 15 - Jun 21</th></tr>
+                    <tr><td colspan='3' class='empty'>None</td></tr>
+                </table>
+            </div>
+            <div>
+                <div class="section-title">❌ Dropped Events (1)</div>
+                <table>
+                    <tr><th>Event</th><th>Jun 22 - Jun 28</th><th>Jun 15 - Jun 21</th></tr>
+                    
+            <tr>
+                <td>page_view_give_cru</td>
+                <td>—</td>
+                <td>3</td>
+            </tr>
+                </table>
+            </div>
+        </div>
+        <div class="section-title">📊 Event Volume Changes (39 events · top 15 by % change)</div>
+        <table>
+            <tr>
+                <th>Event</th>
+                <th>Jun 15 - Jun 21</th>
+                <th>Jun 22 - Jun 28</th>
+                <th>Change</th>
+            </tr>
+            
+            <tr>
+                <td>payment_method_changes_edit</td>
+                <td>172</td>
+                <td>262</td>
+                <td><span class="pct-positive">+52.3%</span></td>
+            </tr>
+            <tr>
+                <td>download_click</td>
+                <td>68</td>
+                <td>38</td>
+                <td><span class="pct-negative">-44.1%</span></td>
+            </tr>
+            <tr>
+                <td>payment_method_changes_adding</td>
+                <td>235</td>
+                <td>282</td>
+                <td><span class="pct-positive">+20.0%</span></td>
+            </tr>
+            <tr>
+                <td>delete_payment_method</td>
+                <td>273</td>
+                <td>322</td>
+                <td><span class="pct-positive">+17.9%</span></td>
+            </tr>
+            <tr>
+                <td>radio_button_selection</td>
+                <td>485</td>
+                <td>399</td>
+                <td><span class="pct-negative">-17.7%</span></td>
+            </tr>
+            <tr>
+                <td>error_404</td>
+                <td>401</td>
+                <td>469</td>
+                <td><span class="pct-positive">+17.0%</span></td>
+            </tr>
+            <tr>
+                <td>first_visit</td>
+                <td>45,036</td>
+                <td>37,593</td>
+                <td><span class="pct-negative">-16.5%</span></td>
+            </tr>
+            <tr>
+                <td>session_start</td>
+                <td>57,219</td>
+                <td>48,828</td>
+                <td><span class="pct-negative">-14.7%</span></td>
+            </tr>
+            <tr>
+                <td>add_to_cart</td>
+                <td>3,116</td>
+                <td>2,738</td>
+                <td><span class="pct-negative">-12.1%</span></td>
+            </tr>
+            <tr>
+                <td>registration_exit</td>
+                <td>159</td>
+                <td>140</td>
+                <td><span class="pct-negative">-11.9%</span></td>
+            </tr>
+            <tr>
+                <td>internal_link_click</td>
+                <td>26,902</td>
+                <td>24,057</td>
+                <td><span class="pct-negative">-10.6%</span></td>
+            </tr>
+            <tr>
+                <td>user_engagement</td>
+                <td>86,017</td>
+                <td>77,082</td>
+                <td><span class="pct-negative">-10.4%</span></td>
+            </tr>
+            <tr>
+                <td>view_item</td>
+                <td>5,196</td>
+                <td>4,658</td>
+                <td><span class="pct-negative">-10.3%</span></td>
+            </tr>
+            <tr>
+                <td>remove_from_cart</td>
+                <td>137</td>
+                <td>123</td>
+                <td><span class="pct-negative">-10.2%</span></td>
+            </tr>
+            <tr>
+                <td>search</td>
+                <td>8,004</td>
+                <td>7,206</td>
+                <td><span class="pct-negative">-10.0%</span></td>
+            </tr>
+        </table>
+        <div class="section-title">🔍 (Not Set) Rates — 1,054 sessions</div>
+        <table>
+            <tr>
+                <th>Dimension</th>
+                <th>Previous</th>
+                <th>Current</th>
+                <th>Change (pp)</th>
+            </tr>
+            
+            <tr>
+                <td>Source / Medium</td>
+                <td>3.3%</td>
+                <td>2.3%</td>
+                <td><span class="change-down-good">↓ -1.1pp</span></td>
+            </tr>
+            <tr>
+                <td>Source</td>
+                <td>3.3%</td>
+                <td>2.3%</td>
+                <td><span class="change-down-good">↓ -1.1pp</span></td>
+            </tr>
+            <tr>
+                <td>Campaign</td>
+                <td>3.3%</td>
+                <td>4.5%</td>
+                <td><span class="change-up-bad">↑ +1.2pp</span></td>
+            </tr>
+            <tr>
+                <td>Page Location</td>
+                <td>0.0%</td>
+                <td>0.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+        </table>
+        <div class="section-title">📡 Attribution Health — 15,886 paid sessions</div>
+        <table>
+            <tr>
+                <th>Metric</th><th>Previous</th><th>Current</th><th>Change (pp)</th>
+            </tr>
+            
+            <tr>
+                <td>
+                    UTM Coverage
+                    <small style="color:#999">% of sessions with at least one UTM parameter</small>
+                </td>
+                <td>99.8%</td>
+                <td>99.7%</td>
+                <td><span class="change-down-bad">↓ -0.0pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    Google Ads gclid Presence
+                    <small style="color:#999">% of all sessions carrying a gclid parameter (auto-tagging health)</small>
+                </td>
+                <td>3.0%</td>
+                <td>3.5%</td>
+                <td><span class="change-up-good">↑ +0.5pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    Paid Sessions — Missing Attribution
+                    <small style="color:#999">% of sessions from known paid sources arriving with no source/medium</small>
+                </td>
+                <td>0.0%</td>
+                <td>0.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+        </table>
+        
+            <div class="section-title">📣 Active Campaigns (top 10 by sessions)</div>
+            <table>
+                <tr>
+                    <th>Campaign</th><th>Source</th><th>Medium</th><th>Sessions</th>
+                </tr>
+                
+            <tr>
+                <td>(direct)</td>
+                <td>(direct)</td>
+                <td>(none)</td>
+                <td>16,871</td>
+            </tr>
+            <tr>
+                <td>(organic)</td>
+                <td>google</td>
+                <td>organic</td>
+                <td>12,990</td>
+            </tr>
+            <tr>
+                <td>(referral)</td>
+                <td>victorybeyondthecup.com</td>
+                <td>referral</td>
+                <td>1,285</td>
+            </tr>
+            <tr>
+                <td>Cru.org Newsletter Sign Up 2024 GA4</td>
+                <td>google</td>
+                <td>cpc</td>
+                <td>1,055</td>
+            </tr>
+            <tr>
+                <td>(organic)</td>
+                <td>bing</td>
+                <td>organic</td>
+                <td>613</td>
+            </tr>
+            <tr>
+                <td>(referral)</td>
+                <td>s.victorybeyondthecup.com</td>
+                <td>referral</td>
+                <td>426</td>
+            </tr>
+            <tr>
+                <td>(organic)</td>
+                <td>yahoo</td>
+                <td>organic</td>
+                <td>211</td>
+            </tr>
+            <tr>
+                <td>AW Port Cities 2026</td>
+                <td>google</td>
+                <td>cpc</td>
+                <td>185</td>
+            </tr>
+            <tr>
+                <td>WG5CPO</td>
+                <td>web</td>
+                <td>popup</td>
+                <td>182</td>
+            </tr>
+            <tr>
+                <td>(organic)</td>
+                <td>duckduckgo</td>
+                <td>organic</td>
+                <td>172</td>
+            </tr>
+            </table>
+        <div class="section-title">✅ Parameter Validity Rates</div>
+        <table>
+            <tr>
+                <th>Event</th>
+                <th>Volume</th>
+                <th>Previous</th>
+                <th>Current</th>
+                <th>Change (pp)</th>
+            </tr>
+            
+            <tr>
+                <td>
+                    <strong>purchase</strong>
+                    <small style="color:#999;display:block">Transaction ID not null/undefined, value > 0, currency present, item_id present</small>
+                </td>
+                <td style="color:#888;font-size:0.8rem">3,410 fires / 3,410 valid</td>
+                <td>100.0%</td>
+                <td>100.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>begin_checkout</strong>
+                    <small style="color:#999;display:block">Value > 0 and currency present</small>
+                </td>
+                <td style="color:#888;font-size:0.8rem">5,126 fires / 0 valid</td>
+                <td>0.0%</td>
+                <td>0.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>add_to_cart</strong>
+                    <small style="color:#999;display:block">Item ID present and value > 0</small>
+                </td>
+                <td style="color:#888;font-size:0.8rem">2,738 fires / 2,738 valid</td>
+                <td>100.0%</td>
+                <td>100.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>view_item</strong>
+                    <small style="color:#999;display:block">Item ID and item name present</small>
+                </td>
+                <td style="color:#888;font-size:0.8rem">4,573 fires / 4,573 valid</td>
+                <td>100.0%</td>
+                <td>100.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>page_view</strong>
+                    <small style="color:#999;display:block">page_location present and not empty</small>
+                </td>
+                <td style="color:#888;font-size:0.8rem">61,085 fires / 61,085 valid</td>
+                <td>100.0%</td>
+                <td>100.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+        </table><div class="section-title">🛒 Purchase Parameter Completeness — 3,410 purchases</div>
+            <div class="section-title" style="margin-top:14px">🔴 Required Parameters</div>
+            <table>
+                <tr><th>Parameter</th><th>Previous</th><th>Current</th><th>Change (pp)</th></tr>
+                
+                <tr>
+                    <td>Transaction ID</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Revenue (> 0)</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Currency</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+            </table>
+            <div class="section-title" style="margin-top:14px">🟡 Expected Parameters</div>
+            <table>
+                <tr><th>Parameter</th><th>Previous</th><th>Current</th><th>Change (pp)</th></tr>
+                
+                <tr>
+                    <td>Item ID</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Item Name</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Item Quantity</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+            </table>
+            <div class="section-title" style="margin-top:14px">⚪ Optional Parameters</div>
+            <table>
+                <tr><th>Parameter</th><th>Previous</th><th>Current</th><th>Change (pp)</th></tr>
+                
+                <tr>
+                    <td>Item Category</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Coupon</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+            </table>
+            <div class="section-title" style="margin-top:14px">⚠️ Quality Signals</div>
+            <table>
+                <tr><th>Parameter</th><th>Previous</th><th>Current</th><th>Change (pp)</th></tr>
+                
+                <tr>
+                    <td>Zero Revenue</td>
+                    <td>0.0%</td>
+                    <td>0.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Empty Items Array</td>
+                    <td>0.0%</td>
+                    <td>0.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Duplicate Transactions</td>
+                    <td>0.0%</td>
+                    <td>0.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+            </table>
+        <div class="section-title">🛍️ Ecommerce Funnel</div>
+        <div class="funnel-grid">
+            <div class="funnel-step">
+                <div class="funnel-step-name">View Item</div>
+                <div class="funnel-step-count">3,272</div>
+                <div class="funnel-step-pct">8.8% of sessions</div>
+                <div class="funnel-step-change"><span class="change-up-good">↑ +0.3pp</span></div>
+            </div>
+            <div class="funnel-step">
+                <div class="funnel-step-name">Add To Cart</div>
+                <div class="funnel-step-count">2,303</div>
+                <div class="funnel-step-pct">6.2% of sessions</div>
+                <div class="funnel-step-change"><span class="change-up-good">↑ +0.2pp</span></div>
+            </div>
+            <div class="funnel-step">
+                <div class="funnel-step-name">View Cart</div>
+                <div class="funnel-step-count">0</div>
+                <div class="funnel-step-pct">0.0% of sessions</div>
+                <div class="funnel-step-change"><span class="change-neutral">→ 0.0pp</span></div>
+            </div>
+            <div class="funnel-step">
+                <div class="funnel-step-name">Begin Checkout</div>
+                <div class="funnel-step-count">4,328</div>
+                <div class="funnel-step-pct">11.6% of sessions</div>
+                <div class="funnel-step-change"><span class="change-up-good">↑ +0.9pp</span></div>
+            </div>
+            <div class="funnel-step">
+                <div class="funnel-step-name">Purchase</div>
+                <div class="funnel-step-count">3,288</div>
+                <div class="funnel-step-pct">8.8% of sessions</div>
+                <div class="funnel-step-change"><span class="change-up-good">↑ +0.8pp</span></div>
+            </div></div>
+        
+            <div class="section-title">Step-to-Step Conversion Ratios</div>
+            <table>
+                <tr><th>Step</th><th>Previous</th><th>Current</th><th>Change (pp)</th></tr>
+                
+            <tr>
+                <td>View Item → Add To Cart</td>
+                <td>71.0%</td>
+                <td>70.4%</td>
+                <td><span class="change-down-bad">↓ -0.6pp</span></td>
+            </tr>
+            <tr>
+                <td>Add To Cart → View Cart</td>
+                <td>—</td>
+                <td>—</td>
+                <td><span class="change-neutral">—</span></td>
+            </tr>
+            <tr>
+                <td>View Cart → Begin Checkout</td>
+                <td>—</td>
+                <td>—</td>
+                <td><span class="change-neutral">—</span></td>
+            </tr>
+            <tr>
+                <td>Begin Checkout → Purchase</td>
+                <td>74.7%</td>
+                <td>76.0%</td>
+                <td><span class="change-up-good">↑ +1.3pp</span></td>
+            </tr>
+            </table>
+        <div class="section-title">💰 Revenue Metrics</div>
+        <table>
+            <tr><th>Metric</th><th>Previous</th><th>Current</th><th>Change</th></tr>
+            
+            <tr>
+                <td>Total Purchases</td>
+                <td>3,477</td>
+                <td>3,312</td>
+                <td><span class="change-down-bad">↓ -4.8%</span></td>
+            </tr>
+            
+            <tr>
+                <td>Total Revenue</td>
+                <td>$1,036,890.90</td>
+                <td>$1,121,096.09</td>
+                <td><span class="change-up-good">↑ +8.1%</span></td>
+            </tr>
+            
+            <tr>
+                <td>Avg Order Value</td>
+                <td>$298.21</td>
+                <td>$338.50</td>
+                <td><span class="change-up-good">↑ +13.5%</span></td>
+            </tr>
+            
+        <tr>
+            <td>Purchases with no prior checkout</td>
+            <td>38</td>
+            <td>31</td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td>Purchases with zero revenue</td>
+            <td>0</td>
+            <td>0</td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td>Days with purchases</td>
+            <td>—</td>
+            <td>6 of 7</td>
+            <td>—</td>
+        </tr>
+        </table>
+        <div class="chart-section">
+            <div class="chart-title">
+                📈 Event Volume Trends
+                <span class="chart-sub">Top 10 events · click legend to toggle</span>
+            </div>
+            <div class="chart-wrap">
+                <canvas id="chart_4"></canvas>
+            </div>
+        </div>
+        <script>
+        (function() {
+            const ctx = document.getElementById('chart_4').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {"labels": ["2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19", "2026-06-20", "2026-06-21", "2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-27"], "datasets": [{"label": "user_engagement", "data": [14320, 14401, 13482, 13126, 11357, 9952, 9379, 15463, 13917, 13389, 12565, 11700, 10048], "borderColor": "#1A56A0", "backgroundColor": "#1A56A018", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "page_view", "data": [11864, 11196, 10616, 9915, 9373, 7002, 6715, 11405, 11433, 10288, 10111, 10063, 7785], "borderColor": "#16A34A", "backgroundColor": "#16A34A18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "session_start", "data": [8893, 9058, 8856, 8635, 7855, 7042, 6880, 9251, 9028, 8716, 7765, 7486, 6582], "borderColor": "#D97706", "backgroundColor": "#D9770618", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "internal_button_click", "data": [10081, 9800, 7966, 7907, 7389, 6249, 5532, 9247, 9384, 8420, 8368, 8620, 6887], "borderColor": "#9333EA", "backgroundColor": "#9333EA18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "first_visit", "data": [6775, 6865, 6774, 6670, 6118, 5941, 5893, 7116, 6904, 6752, 5826, 5700, 5295], "borderColor": "#DC2626", "backgroundColor": "#DC262618", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "internal_link_click", "data": [4952, 4701, 4146, 3667, 3758, 3097, 2581, 4464, 4895, 4110, 4001, 3640, 2947], "borderColor": "#0891B2", "backgroundColor": "#0891B218", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "checkout_step", "data": [2733, 2530, 2302, 2342, 2165, 1645, 1533, 2525, 2332, 2378, 2368, 2528, 2088], "borderColor": "#65A30D", "backgroundColor": "#65A30D18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "select_checkout_options", "data": [1779, 1624, 1504, 1511, 1395, 1051, 1004, 1662, 1520, 1553, 1522, 1615, 1356], "borderColor": "#EA580C", "backgroundColor": "#EA580C18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "search", "data": [1468, 1322, 1423, 1156, 1097, 760, 778, 1401, 1426, 1190, 1240, 1128, 821], "borderColor": "#7C3AED", "backgroundColor": "#7C3AED18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "view_item_list", "data": [1482, 1271, 1357, 1061, 1086, 726, 713, 1369, 1410, 1139, 1174, 1052, 786], "borderColor": "#DB2777", "backgroundColor": "#DB277718", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}], "split_idx": 7, "split_label": "Week boundary (2026-06-22)"},
+                options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: { boxWidth: 12, font: { size: 11 } }
+            },
+            tooltip: {
+                callbacks: {
+                    label: c => ` ${c.dataset.label}: ${c.parsed.y.toLocaleString()}`
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: { maxTicksLimit: 10, font: { size: 10 }, maxRotation: 45 },
+                grid:  { color: '#f0f0f0' }
+            },
+            y: {
+                beginAtZero: true,
+                ticks: { font: { size: 11 }, callback: v => v.toLocaleString() },
+                grid:  { color: '#f0f0f0' }
+            }
+        }
+    }
+            });
+        })();
+        </script>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <div class="prop-name">UNTO</div>
+                <div class="prop-id">analytics_••••••979</div>
+                <div style="margin-top:6px"><span class="prop-type type-ecommerce">ecommerce</span> </div>
+            </div>
+        </div>
+        
+        <div class="two-col">
+            <div>
+                <div class="section-title">🆕 New Events (0)</div>
+                <table>
+                    <tr><th>Event</th><th>Jun 22 - Jun 28</th><th>Jun 15 - Jun 21</th></tr>
+                    <tr><td colspan='3' class='empty'>None</td></tr>
+                </table>
+            </div>
+            <div>
+                <div class="section-title">❌ Dropped Events (0)</div>
+                <table>
+                    <tr><th>Event</th><th>Jun 22 - Jun 28</th><th>Jun 15 - Jun 21</th></tr>
+                    <tr><td colspan='3' class='empty'>None</td></tr>
+                </table>
+            </div>
+        </div>
+        <div class="section-title">📊 Event Volume Changes (18 events · top 15 by % change)</div>
+        <table>
+            <tr>
+                <th>Event</th>
+                <th>Jun 15 - Jun 21</th>
+                <th>Jun 22 - Jun 28</th>
+                <th>Change</th>
+            </tr>
+            
+            <tr>
+                <td>error_404</td>
+                <td>354</td>
+                <td>165</td>
+                <td><span class="pct-negative">-53.4%</span></td>
+            </tr>
+            <tr>
+                <td>add_payment_info</td>
+                <td>29</td>
+                <td>39</td>
+                <td><span class="pct-positive">+34.5%</span></td>
+            </tr>
+            <tr>
+                <td>scroll</td>
+                <td>1,469</td>
+                <td>969</td>
+                <td><span class="pct-negative">-34.0%</span></td>
+            </tr>
+            <tr>
+                <td>internal_link_click</td>
+                <td>1,959</td>
+                <td>1,304</td>
+                <td><span class="pct-negative">-33.4%</span></td>
+            </tr>
+            <tr>
+                <td>add_to_cart</td>
+                <td>30</td>
+                <td>40</td>
+                <td><span class="pct-positive">+33.3%</span></td>
+            </tr>
+            <tr>
+                <td>user_engagement</td>
+                <td>2,248</td>
+                <td>1,613</td>
+                <td><span class="pct-negative">-28.2%</span></td>
+            </tr>
+            <tr>
+                <td>page_view</td>
+                <td>5,061</td>
+                <td>3,650</td>
+                <td><span class="pct-negative">-27.9%</span></td>
+            </tr>
+            <tr>
+                <td>purchase</td>
+                <td>29</td>
+                <td>37</td>
+                <td><span class="pct-positive">+27.6%</span></td>
+            </tr>
+            <tr>
+                <td>first_visit</td>
+                <td>2,614</td>
+                <td>1,906</td>
+                <td><span class="pct-negative">-27.1%</span></td>
+            </tr>
+            <tr>
+                <td>session_start</td>
+                <td>3,270</td>
+                <td>2,470</td>
+                <td><span class="pct-negative">-24.5%</span></td>
+            </tr>
+            <tr>
+                <td>click</td>
+                <td>274</td>
+                <td>207</td>
+                <td><span class="pct-negative">-24.4%</span></td>
+            </tr>
+            <tr>
+                <td>checkout_error</td>
+                <td>11</td>
+                <td>9</td>
+                <td><span class="pct-negative">-18.2%</span></td>
+            </tr>
+            <tr>
+                <td>file_download</td>
+                <td>36</td>
+                <td>30</td>
+                <td><span class="pct-negative">-16.7%</span></td>
+            </tr>
+            <tr>
+                <td>download_click</td>
+                <td>36</td>
+                <td>39</td>
+                <td><span class="pct-positive">+8.3%</span></td>
+            </tr>
+            <tr>
+                <td>begin_checkout</td>
+                <td>277</td>
+                <td>297</td>
+                <td><span class="pct-positive">+7.2%</span></td>
+            </tr>
+        </table>
+        <div class="section-title">🔍 (Not Set) Rates — 197 sessions</div>
+        <table>
+            <tr>
+                <th>Dimension</th>
+                <th>Previous</th>
+                <th>Current</th>
+                <th>Change (pp)</th>
+            </tr>
+            
+            <tr>
+                <td>Source / Medium</td>
+                <td>5.7%</td>
+                <td>4.6%</td>
+                <td><span class="change-down-good">↓ -1.1pp</span></td>
+            </tr>
+            <tr>
+                <td>Source</td>
+                <td>7.3%</td>
+                <td>5.1%</td>
+                <td><span class="change-down-good">↓ -2.2pp</span></td>
+            </tr>
+            <tr>
+                <td>Campaign</td>
+                <td>7.7%</td>
+                <td>8.6%</td>
+                <td><span class="change-up-bad">↑ +0.9pp</span></td>
+            </tr>
+            <tr>
+                <td>Page Location</td>
+                <td>0.0%</td>
+                <td>0.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+        </table>
+        <div class="section-title">📡 Attribution Health — 1,371 paid sessions</div>
+        <table>
+            <tr>
+                <th>Metric</th><th>Previous</th><th>Current</th><th>Change (pp)</th>
+            </tr>
+            
+            <tr>
+                <td>
+                    UTM Coverage
+                    <small style="color:#999">% of sessions with at least one UTM parameter</small>
+                </td>
+                <td>100.0%</td>
+                <td>100.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    Google Ads gclid Presence
+                    <small style="color:#999">% of all sessions carrying a gclid parameter (auto-tagging health)</small>
+                </td>
+                <td>12.3%</td>
+                <td>11.4%</td>
+                <td><span class="change-down-bad">↓ -0.9pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    Paid Sessions — Missing Attribution
+                    <small style="color:#999">% of sessions from known paid sources arriving with no source/medium</small>
+                </td>
+                <td>0.4%</td>
+                <td>0.1%</td>
+                <td><span class="change-down-good">↓ -0.4pp</span></td>
+            </tr>
+        </table>
+        
+            <div class="section-title">📣 Active Campaigns (top 10 by sessions)</div>
+            <table>
+                <tr>
+                    <th>Campaign</th><th>Source</th><th>Medium</th><th>Sessions</th>
+                </tr>
+                
+            <tr>
+                <td>(direct)</td>
+                <td>(direct)</td>
+                <td>(none)</td>
+                <td>863</td>
+            </tr>
+            <tr>
+                <td>2026_lev1_ad1</td>
+                <td>meta</td>
+                <td>cpc</td>
+                <td>682</td>
+            </tr>
+            <tr>
+                <td>(organic)</td>
+                <td>google</td>
+                <td>cpc</td>
+                <td>237</td>
+            </tr>
+            <tr>
+                <td>(organic)</td>
+                <td>google</td>
+                <td>organic</td>
+                <td>203</td>
+            </tr>
+            <tr>
+                <td>PGSP01</td>
+                <td>sfmc</td>
+                <td>email</td>
+                <td>83</td>
+            </tr>
+            <tr>
+                <td>(referral)</td>
+                <td>cru.org</td>
+                <td>referral</td>
+                <td>53</td>
+            </tr>
+            <tr>
+                <td>(cross-network)</td>
+                <td>Data Not Available</td>
+                <td>Data Not Available</td>
+                <td>42</td>
+            </tr>
+            <tr>
+                <td>humanitarian-jesus</td>
+                <td>cru-org</td>
+                <td>referral</td>
+                <td>30</td>
+            </tr>
+            <tr>
+                <td>unto june 2025 mission packing project</td>
+                <td>acs</td>
+                <td>email</td>
+                <td>21</td>
+            </tr>
+            <tr>
+                <td>PG6EM7</td>
+                <td>sfmc</td>
+                <td>email</td>
+                <td>18</td>
+            </tr>
+            </table>
+        <div class="section-title">✅ Parameter Validity Rates</div>
+        <table>
+            <tr>
+                <th>Event</th>
+                <th>Volume</th>
+                <th>Previous</th>
+                <th>Current</th>
+                <th>Change (pp)</th>
+            </tr>
+            
+            <tr>
+                <td>
+                    <strong>purchase</strong>
+                    <small style="color:#999;display:block">Transaction ID not null/undefined, value > 0, currency present, item_id present</small>
+                </td>
+                <td style="color:#888;font-size:0.8rem">37 fires / 37 valid</td>
+                <td>100.0%</td>
+                <td>100.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>begin_checkout</strong>
+                    <small style="color:#999;display:block">Value > 0 and currency present</small>
+                </td>
+                <td style="color:#888;font-size:0.8rem">297 fires / 0 valid</td>
+                <td>0.0%</td>
+                <td>0.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>page_view</strong>
+                    <small style="color:#999;display:block">page_location present and not empty</small>
+                </td>
+                <td style="color:#888;font-size:0.8rem">3,650 fires / 3,650 valid</td>
+                <td>100.0%</td>
+                <td>100.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+        </table><div class="section-title">🛒 Purchase Parameter Completeness — 37 purchases</div>
+            <div class="section-title" style="margin-top:14px">🔴 Required Parameters</div>
+            <table>
+                <tr><th>Parameter</th><th>Previous</th><th>Current</th><th>Change (pp)</th></tr>
+                
+                <tr>
+                    <td>Transaction ID</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Revenue (> 0)</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Currency</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+            </table>
+            <div class="section-title" style="margin-top:14px">🟡 Expected Parameters</div>
+            <table>
+                <tr><th>Parameter</th><th>Previous</th><th>Current</th><th>Change (pp)</th></tr>
+                
+                <tr>
+                    <td>Item ID</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Item Name</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Item Quantity</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+            </table>
+            <div class="section-title" style="margin-top:14px">⚪ Optional Parameters</div>
+            <table>
+                <tr><th>Parameter</th><th>Previous</th><th>Current</th><th>Change (pp)</th></tr>
+                
+                <tr>
+                    <td>Item Category</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Coupon</td>
+                    <td>100.0%</td>
+                    <td>100.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+            </table>
+            <div class="section-title" style="margin-top:14px">⚠️ Quality Signals</div>
+            <table>
+                <tr><th>Parameter</th><th>Previous</th><th>Current</th><th>Change (pp)</th></tr>
+                
+                <tr>
+                    <td>Zero Revenue</td>
+                    <td>0.0%</td>
+                    <td>0.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Empty Items Array</td>
+                    <td>0.0%</td>
+                    <td>0.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+                <tr>
+                    <td>Duplicate Transactions</td>
+                    <td>0.0%</td>
+                    <td>0.0%</td>
+                    <td><span class="change-neutral">→ 0.0pp</span></td>
+                </tr>
+            </table>
+        <div class="section-title">🛍️ Ecommerce Funnel</div>
+        <div class="funnel-grid">
+            <div class="funnel-step">
+                <div class="funnel-step-name">View Item</div>
+                <div class="funnel-step-count">0</div>
+                <div class="funnel-step-pct">0.0% of sessions</div>
+                <div class="funnel-step-change"><span class="change-neutral">→ 0.0pp</span></div>
+            </div>
+            <div class="funnel-step">
+                <div class="funnel-step-name">Add To Cart</div>
+                <div class="funnel-step-count">39</div>
+                <div class="funnel-step-pct">1.6% of sessions</div>
+                <div class="funnel-step-change"><span class="change-up-good">↑ +0.7pp</span></div>
+            </div>
+            <div class="funnel-step">
+                <div class="funnel-step-name">View Cart</div>
+                <div class="funnel-step-count">0</div>
+                <div class="funnel-step-pct">0.0% of sessions</div>
+                <div class="funnel-step-change"><span class="change-neutral">→ 0.0pp</span></div>
+            </div>
+            <div class="funnel-step">
+                <div class="funnel-step-name">Begin Checkout</div>
+                <div class="funnel-step-count">185</div>
+                <div class="funnel-step-pct">7.5% of sessions</div>
+                <div class="funnel-step-change"><span class="change-up-good">↑ +3.0pp</span></div>
+            </div>
+            <div class="funnel-step">
+                <div class="funnel-step-name">Purchase</div>
+                <div class="funnel-step-count">36</div>
+                <div class="funnel-step-pct">1.5% of sessions</div>
+                <div class="funnel-step-change"><span class="change-up-good">↑ +0.6pp</span></div>
+            </div></div>
+        
+            <div class="section-title">Step-to-Step Conversion Ratios</div>
+            <table>
+                <tr><th>Step</th><th>Previous</th><th>Current</th><th>Change (pp)</th></tr>
+                
+            <tr>
+                <td>View Item → Add To Cart</td>
+                <td>—</td>
+                <td>—</td>
+                <td><span class="change-neutral">—</span></td>
+            </tr>
+            <tr>
+                <td>Add To Cart → View Cart</td>
+                <td>—</td>
+                <td>—</td>
+                <td><span class="change-neutral">—</span></td>
+            </tr>
+            <tr>
+                <td>View Cart → Begin Checkout</td>
+                <td>—</td>
+                <td>—</td>
+                <td><span class="change-neutral">—</span></td>
+            </tr>
+            <tr>
+                <td>Begin Checkout → Purchase</td>
+                <td>18.9%</td>
+                <td>19.5%</td>
+                <td><span class="change-up-good">↑ +0.5pp</span></td>
+            </tr>
+            </table>
+        <div class="section-title">💰 Revenue Metrics</div>
+        <table>
+            <tr><th>Metric</th><th>Previous</th><th>Current</th><th>Change</th></tr>
+            
+            <tr>
+                <td>Total Purchases</td>
+                <td>28</td>
+                <td>36</td>
+                <td><span class="change-up-good">↑ +28.6%</span></td>
+            </tr>
+            
+            <tr>
+                <td>Total Revenue</td>
+                <td>$11,298.08</td>
+                <td>$9,113.76</td>
+                <td><span class="change-down-bad">↓ -19.3%</span></td>
+            </tr>
+            
+            <tr>
+                <td>Avg Order Value</td>
+                <td>$403.50</td>
+                <td>$253.16</td>
+                <td><span class="change-down-bad">↓ -37.3%</span></td>
+            </tr>
+            
+        <tr>
+            <td>Purchases with no prior checkout</td>
+            <td>0</td>
+            <td>0</td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td>Purchases with zero revenue</td>
+            <td>0</td>
+            <td>0</td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td>Days with purchases</td>
+            <td>—</td>
+            <td>5 of 7</td>
+            <td>—</td>
+        </tr>
+        </table>
+        <div class="chart-section">
+            <div class="chart-title">
+                📈 Event Volume Trends
+                <span class="chart-sub">Top 10 events · click legend to toggle</span>
+            </div>
+            <div class="chart-wrap">
+                <canvas id="chart_5"></canvas>
+            </div>
+        </div>
+        <script>
+        (function() {
+            const ctx = document.getElementById('chart_5').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {"labels": ["2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19", "2026-06-20", "2026-06-21", "2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-27"], "datasets": [{"label": "page_view", "data": [879, 782, 812, 774, 685, 608, 521, 640, 587, 512, 691, 561, 659], "borderColor": "#1A56A0", "backgroundColor": "#1A56A018", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "session_start", "data": [497, 505, 499, 478, 468, 426, 397, 455, 398, 360, 432, 367, 458], "borderColor": "#16A34A", "backgroundColor": "#16A34A18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "first_visit", "data": [380, 381, 371, 383, 376, 371, 352, 356, 300, 261, 353, 277, 359], "borderColor": "#D97706", "backgroundColor": "#D9770618", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "user_engagement", "data": [477, 350, 396, 337, 262, 238, 188, 300, 283, 240, 317, 212, 261], "borderColor": "#9333EA", "backgroundColor": "#9333EA18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "internal_link_click", "data": [390, 297, 316, 331, 270, 227, 128, 217, 194, 204, 293, 171, 225], "borderColor": "#DC2626", "backgroundColor": "#DC262618", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "scroll", "data": [242, 187, 228, 236, 216, 200, 160, 194, 137, 124, 205, 143, 166], "borderColor": "#0891B2", "backgroundColor": "#0891B218", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "internal_button_click", "data": [75, 91, 161, 63, 87, 78, 74, 120, 90, 84, 80, 111, 157], "borderColor": "#65A30D", "backgroundColor": "#65A30D18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "begin_checkout", "data": [73, 48, 52, 38, 30, 26, 10, 33, 46, 10, 30, 17, 161], "borderColor": "#EA580C", "backgroundColor": "#EA580C18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "error_404", "data": [22, 25, 41, 58, 75, 71, 62, 57, 14, 14, 48, 16, 16], "borderColor": "#7C3AED", "backgroundColor": "#7C3AED18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "click", "data": [72, 38, 44, 44, 42, 14, 20, 45, 30, 40, 41, 40, 11], "borderColor": "#DB2777", "backgroundColor": "#DB277718", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}], "split_idx": 7, "split_label": "Week boundary (2026-06-22)"},
+                options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: { boxWidth: 12, font: { size: 11 } }
+            },
+            tooltip: {
+                callbacks: {
+                    label: c => ` ${c.dataset.label}: ${c.parsed.y.toLocaleString()}`
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: { maxTicksLimit: 10, font: { size: 10 }, maxRotation: 45 },
+                grid:  { color: '#f0f0f0' }
+            },
+            y: {
+                beginAtZero: true,
+                ticks: { font: { size: 11 }, callback: v => v.toLocaleString() },
+                grid:  { color: '#f0f0f0' }
+            }
+        }
+    }
+            });
+        })();
+        </script>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <div class="prop-name">Her.Bible</div>
+                <div class="prop-id">analytics_••••••874</div>
+                <div style="margin-top:6px"><span class="prop-type type-content">content</span> </div>
+            </div>
+        </div>
+        
+        <div class="two-col">
+            <div>
+                <div class="section-title">🆕 New Events (2)</div>
+                <table>
+                    <tr><th>Event</th><th>Jun 22 - Jun 28</th><th>Jun 15 - Jun 21</th></tr>
+                    
+            <tr>
+                <td>ios_download_click</td>
+                <td>6</td>
+                <td>—</td>
+            </tr>
+            <tr>
+                <td>android_download_click</td>
+                <td>5</td>
+                <td>—</td>
+            </tr>
+                </table>
+            </div>
+            <div>
+                <div class="section-title">❌ Dropped Events (1)</div>
+                <table>
+                    <tr><th>Event</th><th>Jun 22 - Jun 28</th><th>Jun 15 - Jun 21</th></tr>
+                    
+            <tr>
+                <td>acs_email_sign_up</td>
+                <td>—</td>
+                <td>6</td>
+            </tr>
+                </table>
+            </div>
+        </div>
+        <div class="section-title">📊 Event Volume Changes (14 events · top 15 by % change)</div>
+        <table>
+            <tr>
+                <th>Event</th>
+                <th>Jun 15 - Jun 21</th>
+                <th>Jun 22 - Jun 28</th>
+                <th>Change</th>
+            </tr>
+            
+            <tr>
+                <td>internal_link_click</td>
+                <td>1,357</td>
+                <td>815</td>
+                <td><span class="pct-negative">-39.9%</span></td>
+            </tr>
+            <tr>
+                <td>download_click</td>
+                <td>54</td>
+                <td>36</td>
+                <td><span class="pct-negative">-33.3%</span></td>
+            </tr>
+            <tr>
+                <td>user_engagement</td>
+                <td>1,154</td>
+                <td>1,501</td>
+                <td><span class="pct-positive">+30.1%</span></td>
+            </tr>
+            <tr>
+                <td>view_search_results</td>
+                <td>28</td>
+                <td>20</td>
+                <td><span class="pct-negative">-28.6%</span></td>
+            </tr>
+            <tr>
+                <td>video_complete</td>
+                <td>4</td>
+                <td>5</td>
+                <td><span class="pct-positive">+25.0%</span></td>
+            </tr>
+            <tr>
+                <td>video_start</td>
+                <td>13</td>
+                <td>16</td>
+                <td><span class="pct-positive">+23.1%</span></td>
+            </tr>
+            <tr>
+                <td>internal_button_click</td>
+                <td>747</td>
+                <td>606</td>
+                <td><span class="pct-negative">-18.9%</span></td>
+            </tr>
+            <tr>
+                <td>page_view</td>
+                <td>5,878</td>
+                <td>4,800</td>
+                <td><span class="pct-negative">-18.3%</span></td>
+            </tr>
+            <tr>
+                <td>click</td>
+                <td>148</td>
+                <td>130</td>
+                <td><span class="pct-negative">-12.2%</span></td>
+            </tr>
+            <tr>
+                <td>first_visit</td>
+                <td>1,279</td>
+                <td>1,168</td>
+                <td><span class="pct-negative">-8.7%</span></td>
+            </tr>
+            <tr>
+                <td>session_start</td>
+                <td>1,840</td>
+                <td>1,681</td>
+                <td><span class="pct-negative">-8.6%</span></td>
+            </tr>
+            <tr>
+                <td>scroll</td>
+                <td>1,201</td>
+                <td>1,107</td>
+                <td><span class="pct-negative">-7.8%</span></td>
+            </tr>
+            <tr>
+                <td>file_download</td>
+                <td>22</td>
+                <td>23</td>
+                <td><span class="pct-positive">+4.5%</span></td>
+            </tr>
+            <tr>
+                <td>video_progress</td>
+                <td>27</td>
+                <td>28</td>
+                <td><span class="pct-positive">+3.7%</span></td>
+            </tr>
+        </table>
+        <div class="section-title">🔍 (Not Set) Rates — 87 sessions</div>
+        <table>
+            <tr>
+                <th>Dimension</th>
+                <th>Previous</th>
+                <th>Current</th>
+                <th>Change (pp)</th>
+            </tr>
+            
+            <tr>
+                <td>Source / Medium</td>
+                <td>0.0%</td>
+                <td>0.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+            <tr>
+                <td>Source</td>
+                <td>0.0%</td>
+                <td>0.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+            <tr>
+                <td>Campaign</td>
+                <td>3.0%</td>
+                <td>1.1%</td>
+                <td><span class="change-down-good">↓ -1.9pp</span></td>
+            </tr>
+            <tr>
+                <td>Page Location</td>
+                <td>0.0%</td>
+                <td>0.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+        </table>
+        <div class="section-title">📡 Attribution Health — 651 paid sessions</div>
+        <table>
+            <tr>
+                <th>Metric</th><th>Previous</th><th>Current</th><th>Change (pp)</th>
+            </tr>
+            
+            <tr>
+                <td>
+                    UTM Coverage
+                    <small style="color:#999">% of sessions with at least one UTM parameter</small>
+                </td>
+                <td>100.0%</td>
+                <td>100.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    Google Ads gclid Presence
+                    <small style="color:#999">% of all sessions carrying a gclid parameter (auto-tagging health)</small>
+                </td>
+                <td>4.0%</td>
+                <td>1.8%</td>
+                <td><span class="change-down-bad">↓ -2.1pp</span></td>
+            </tr>
+            <tr>
+                <td>
+                    Paid Sessions — Missing Attribution
+                    <small style="color:#999">% of sessions from known paid sources arriving with no source/medium</small>
+                </td>
+                <td>0.0%</td>
+                <td>0.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+        </table>
+        
+            <div class="section-title">📣 Active Campaigns (top 10 by sessions)</div>
+            <table>
+                <tr>
+                    <th>Campaign</th><th>Source</th><th>Medium</th><th>Sessions</th>
+                </tr>
+                
+            <tr>
+                <td>(direct)</td>
+                <td>(direct)</td>
+                <td>(none)</td>
+                <td>955</td>
+            </tr>
+            <tr>
+                <td>(organic)</td>
+                <td>google</td>
+                <td>organic</td>
+                <td>561</td>
+            </tr>
+            <tr>
+                <td>her Story Ep 1</td>
+                <td>google</td>
+                <td>cpc</td>
+                <td>39</td>
+            </tr>
+            <tr>
+                <td>(organic)</td>
+                <td>bing</td>
+                <td>organic</td>
+                <td>27</td>
+            </tr>
+            <tr>
+                <td>her bible</td>
+                <td>acs</td>
+                <td>email</td>
+                <td>13</td>
+            </tr>
+            <tr>
+                <td>(referral)</td>
+                <td>ig</td>
+                <td>social</td>
+                <td>10</td>
+            </tr>
+            <tr>
+                <td>(referral)</td>
+                <td>l.instagram.com</td>
+                <td>referral</td>
+                <td>10</td>
+            </tr>
+            <tr>
+                <td>(organic)</td>
+                <td>yahoo</td>
+                <td>organic</td>
+                <td>7</td>
+            </tr>
+            <tr>
+                <td>herbible-bold-vision</td>
+                <td>cru-org</td>
+                <td>referral</td>
+                <td>6</td>
+            </tr>
+            <tr>
+                <td>digital_marketing_cru.org_newsletter</td>
+                <td>acs</td>
+                <td>email</td>
+                <td>5</td>
+            </tr>
+            </table>
+        <div class="section-title">✅ Parameter Validity Rates</div>
+        <table>
+            <tr>
+                <th>Event</th>
+                <th>Volume</th>
+                <th>Previous</th>
+                <th>Current</th>
+                <th>Change (pp)</th>
+            </tr>
+            
+            <tr>
+                <td>
+                    <strong>page_view</strong>
+                    <small style="color:#999;display:block">page_location present and not empty</small>
+                </td>
+                <td style="color:#888;font-size:0.8rem">4,800 fires / 4,800 valid</td>
+                <td>100.0%</td>
+                <td>100.0%</td>
+                <td><span class="change-neutral">→ 0.0pp</span></td>
+            </tr>
+        </table>
+        <div class="chart-section">
+            <div class="chart-title">
+                📈 Event Volume Trends
+                <span class="chart-sub">Top 10 events · click legend to toggle</span>
+            </div>
+            <div class="chart-wrap">
+                <canvas id="chart_6"></canvas>
+            </div>
+        </div>
+        <script>
+        (function() {
+            const ctx = document.getElementById('chart_6').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {"labels": ["2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19", "2026-06-20", "2026-06-21", "2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-27"], "datasets": [{"label": "page_view", "data": [790, 1107, 971, 755, 856, 753, 646, 824, 1145, 1101, 770, 426, 534], "borderColor": "#1A56A0", "backgroundColor": "#1A56A018", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "session_start", "data": [279, 250, 291, 241, 277, 263, 239, 331, 357, 371, 231, 192, 199], "borderColor": "#16A34A", "backgroundColor": "#16A34A18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "user_engagement", "data": [138, 280, 171, 143, 175, 135, 112, 147, 272, 219, 205, 287, 371], "borderColor": "#D97706", "backgroundColor": "#D9770618", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "first_visit", "data": [192, 165, 198, 155, 195, 192, 182, 254, 264, 261, 146, 122, 121], "borderColor": "#9333EA", "backgroundColor": "#9333EA18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "scroll", "data": [135, 187, 200, 168, 190, 184, 137, 219, 339, 280, 153, 74, 42], "borderColor": "#DC2626", "backgroundColor": "#DC262618", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "internal_link_click", "data": [132, 239, 259, 160, 228, 183, 156, 156, 274, 210, 173, 1, 1], "borderColor": "#0891B2", "backgroundColor": "#0891B218", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "internal_button_click", "data": [114, 136, 128, 99, 99, 85, 86, 94, 265, 148, 97, 0, 2], "borderColor": "#65A30D", "backgroundColor": "#65A30D18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "click", "data": [34, 29, 32, 21, 7, 10, 15, 27, 15, 33, 24, 16, 15], "borderColor": "#EA580C", "backgroundColor": "#EA580C18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "download_click", "data": [3, 20, 10, 5, 6, 4, 6, 3, 11, 12, 10, 0, 0], "borderColor": "#7C3AED", "backgroundColor": "#7C3AED18", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}, {"label": "video_progress", "data": [0, 5, 9, 0, 5, 4, 4, 4, 12, 1, 4, 0, 7], "borderColor": "#DB2777", "backgroundColor": "#DB277718", "borderWidth": 2, "pointRadius": 3, "tension": 0.3, "fill": false}], "split_idx": 7, "split_label": "Week boundary (2026-06-22)"},
+                options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: { boxWidth: 12, font: { size: 11 } }
+            },
+            tooltip: {
+                callbacks: {
+                    label: c => ` ${c.dataset.label}: ${c.parsed.y.toLocaleString()}`
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: { maxTicksLimit: 10, font: { size: 10 }, maxRotation: 45 },
+                grid:  { color: '#f0f0f0' }
+            },
+            y: {
+                beginAtZero: true,
+                ticks: { font: { size: 11 }, callback: v => v.toLocaleString() },
+                grid:  { color: '#f0f0f0' }
+            }
+        }
+    }
+            });
+        })();
+        </script>
+    </div>
+</body>
+</html>
